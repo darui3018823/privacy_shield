@@ -140,7 +140,8 @@ export async function sendMessageSafely(message) {
   try {
     return await chrome.runtime.sendMessage(message);
   } catch (error) {
-    // Extension context invalidated or other error
+    // Extension context invalidated - this is expected when extension reloads
+    // Don't log as it's not an actual error condition
     return null;
   }
 }
