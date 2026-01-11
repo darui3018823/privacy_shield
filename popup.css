@@ -222,10 +222,13 @@ body {
     justify-content: center;
 }
 
-.domain-icon svg {
-    width: 18px;
-    height: 18px;
+.domain-icon svg,
+.domain-icon img {
+    width: 20px;
+    height: 20px;
     color: var(--text-secondary);
+    border-radius: 4px;
+    object-fit: contain;
 }
 
 .domain-info {

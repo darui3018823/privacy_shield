@@ -21,7 +21,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const url = new URL(tab.url);
         tabDomain = url.hostname.replace('www.', '');
-        currentDomain.textContent = tabDomain;
+
+        // Friendly Name Mapping
+        let displayName = tabDomain;
+        if (tabDomain.includes('gemini.google.com')) {
+            displayName = 'Google Gemini';
+        } else if (tabDomain.includes('google.com') || tabDomain.includes('google.co.jp')) {
+            displayName = 'Google Search';
+        } else if (tabDomain.includes('amazon.co.jp')) {
+            displayName = 'Amazon.co.jp';
+        }
+        currentDomain.textContent = displayName;
+
+        // Favicon Logic
+        const domainIconContainer = document.querySelector('.domain-icon');
+        const faviconUrl = tab.favIconUrl;
+
+        if (faviconUrl) {
+            domainIconContainer.innerHTML = `<img src="${faviconUrl}" alt="favicon">`;
+        } else {
+            // Default Icon (SVG) - already present in HTML, but we keep the structure just in case
+            domainIconContainer.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+             `;
+        }
+
 
         const isSupported = supportedDomains.some(d => tabDomain.includes(d));
         if (!isSupported) {
