@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Package Extension
+        run: |
+          mkdir -p build
+          zip -r build/privacy-shield.zip \
+            background.js \
+            content.js \
+            content.css \
+            popup.js \
+            popup.html \
+            popup.css \
+            options.js \
+            options.html \
+            options.css \
+            manifest.json \
+            rules.json \
+            icons/ \
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: build/privacy-shield.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
