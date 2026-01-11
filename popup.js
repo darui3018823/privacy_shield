@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const itemsContent = document.getElementById('itemsContent');
     const openSettings = document.getElementById('openSettings');
 
-    const supportedDomains = ['google.com', 'google.co.jp', 'amazon.co.jp'];
+    const supportedDomains = ['google.com', 'google.co.jp', 'gemini.google.com', 'amazon.co.jp'];
 
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     let tabDomain = '';

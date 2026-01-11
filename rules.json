@@ -2,7 +2,7 @@
     "version": "1.0",
     "domains": {
         "google": {
-            "name": "Google検索",
+            "name": "Google Search",
             "matches": [
                 "www.google.com",
                 "www.google.co.jp"
@@ -15,6 +15,14 @@
                 "update-location",
                 ".dfB0uf"
             ]
+        },
+        "gemini": {
+            "name": "Google Gemini",
+            "matches": [
+                "gemini.google.com"
+            ],
+            "enabled": true,
+            "selectors": []
         },
         "amazon": {
             "name": "Amazon.co.jp",

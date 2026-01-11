@@ -28,7 +28,8 @@
         {
             "matches": [
                 "https://www.google.com/*",
-                "https://www.google.co.jp/*"
+                "https://www.google.co.jp/*",
+                "https://gemini.google.com/*"
             ],
             "css": [
                 "content.css"
@@ -38,7 +39,8 @@
         {
             "matches": [
                 "https://www.google.com/*",
-                "https://www.google.co.jp/*"
+                "https://www.google.co.jp/*",
+                "https://gemini.google.com/*"
             ],
             "js": [
                 "content.js"

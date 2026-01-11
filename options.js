@@ -28,10 +28,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const defaultDomains = {
         google: {
-            name: 'Google検索',
+            name: 'Google Search',
             matches: ['www.google.com', 'www.google.co.jp'],
             enabled: true,
             selectors: ['.O4T6Pe', '.vqkKIe', '.eKPi4', 'update-location', '.dfB0uf']
+        },
+        gemini: {
+            name: 'Google Gemini',
+            matches: ['gemini.google.com'],
+            enabled: true,
+            selectors: []
         },
         amazon: {
             name: 'Amazon.co.jp',
