@@ -68,3 +68,93 @@ BSD 2-Clause License - 詳細は [LICENSE](../License) を参照してくださ�
 ## コントリビューション
 
 コントリビューションは歓迎します！お気軽にプルリクエストを送ってください。
+
+## 開発
+
+### プロジェクト構造
+
+プロジェクトは開発用にモジュラーなES6構造を使用しています：
+
+```
+privacy_shield/
+├── src/
+│   ├── config/
+│   │   ├── constants.js      # 定数と設定値
+│   │   └── config.js          # ドメイン設定
+│   ├── utils/
+│   │   ├── storage.js         # StorageManagerクラス
+│   │   ├── rules.js           # RulesManagerクラス
+│   │   ├── logger.js          # Loggerユーティリティ
+│   │   └── helpers.js         # ヘルパー関数
+│   ├── content/
+│   │   ├── content.js         # コンテンツスクリプト（モジュラー）
+│   │   └── content.css        # コンテンツスタイル
+│   ├── background/
+│   │   └── background.js      # バックグラウンドサービスワーカー（モジュラー）
+│   ├── popup/
+│   │   ├── popup.js           # ポップアップスクリプト（モジュラー）
+│   │   ├── popup.html         # ポップアップUI
+│   │   └── popup.css          # ポップアップスタイル
+│   └── options/
+│       ├── options.js         # オプションスクリプト（モジュラー）
+│       ├── options.html       # オプションUI
+│       └── options.css        # オプションスタイル
+├── build/
+│   ├── bundle.js              # ビルドスクリプト
+│   └── README.md              # ビルドドキュメント
+├── content.js                 # バンドル済みコンテンツスクリプト
+├── background.js              # バンドル済みバックグラウンドスクリプト
+├── popup.js                   # バンドル済みポップアップスクリプト
+├── options.js                 # バンドル済みオプションスクリプト
+└── manifest.json              # 拡張機能マニフェスト
+```
+
+### ビルド
+
+拡張機能はES6モジュールをスタンドアロンファイルにバンドルする必要があります：
+
+```bash
+# 一度だけビルド
+npm run build
+
+# または直接nodeを使用
+node build/bundle.js
+```
+
+### 開発ワークフロー
+
+1. **ソースファイルを編集** `src/` ディレクトリ内
+2. **ビルドを実行** バンドルファイルを生成: `npm run build`
+3. **拡張機能をリロード** ブラウザで
+4. **変更をテスト**
+
+### コードの構成
+
+#### ユーティリティモジュール
+
+- **StorageManager** (`src/utils/storage.js`) - 統一されたchrome.storage操作
+- **RulesManager** (`src/utils/rules.js`) - ルールの読み込みと処理
+- **Logger** (`src/utils/logger.js`) - 統一されたエラーハンドリングとログ記録
+- **Helpers** (`src/utils/helpers.js`) - 共通のユーティリティ関数
+
+#### 設定
+
+- **constants.js** - マジックナンバー、遅延、固定値
+- **config.js** - ドメイン設定とサポートされるドメインリスト
+
+#### この構造の利点
+
+- ✅ **モジュール性** - 各ファイルには単一の責任がある
+- ✅ **再利用性** - ユーティリティモジュールで共有されたコード
+- ✅ **保守性** - コードの検索と更新が容易
+- ✅ **テスト容易性** - 小さく、集中したモジュールがテストしやすい
+- ✅ **ドキュメント** - すべての関数にJSDocコメント
+- ✅ **型安全性** - 明確な関数シグネチャと戻り値の型
+
+### コーディング規約
+
+- すべての関数にJSDocコメントを使用
+- 単一責任の原則に従う
+- try-catchとLoggerでエラーを処理
+- マジックナンバーの代わりに定数を使用
+- ES6+構文を優先（const、アロー関数、async/await）
