@@ -4,7 +4,9 @@
 update-location,
 .dfB0uf,
 location-footer,
-.location-menu-item-container {
+.location-menu-item-container,
+#nav-global-location-popover-link,
+#glow-ingress-block {
   display: none !important;
 }
 
@@ -14,7 +16,9 @@ body.privacy-guard-paused .eKPi4,
 body.privacy-guard-paused update-location,
 body.privacy-guard-paused .dfB0uf,
 body.privacy-guard-paused location-footer,
-body.privacy-guard-paused .location-menu-item-container {
+body.privacy-guard-paused .location-menu-item-container,
+body.privacy-guard-paused #nav-global-location-popover-link,
+body.privacy-guard-paused #glow-ingress-block {
   display: block !important;
 }
 

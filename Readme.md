@@ -54,7 +54,8 @@ A browser extension that automatically hides privacy-sensitive information on we
 | Site | What's Hidden |
 |------|---------------|
 | Google Search | Location info, footer details |
-| Amazon.co.jp | User-defined selectors |
+| Google Gemini | Location info |
+| Amazon.co.jp | Header delivery address |
 
 ## Configuration
 

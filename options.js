@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             name: 'Amazon.co.jp',
             matches: ['www.amazon.co.jp'],
             enabled: true,
-            selectors: []
+            selectors: ['#nav-global-location-popover-link', '#glow-ingress-block']
         }
     };
 
