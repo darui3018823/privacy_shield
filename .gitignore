@@ -1,4 +1,20 @@
 # Settings Files
+node_modules/
+.DS_Store
+*.pem
+*.key
 
 # Later Project Files
 hide_location/
+
+# Build outputs
+build/
+dist/
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Environment
+.env
+.env.local
