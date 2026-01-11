@@ -39,7 +39,7 @@ jobs:
           prerelease: false
           generate_release_notes: true
           body: |
-            # Privacy Shield v${{ github.ref_name }}
+            # Privacy Shield ${{ github.ref_name }}
 
             ## 📦 Assets
             - **privacy-shield.zip** - Browser Extension
