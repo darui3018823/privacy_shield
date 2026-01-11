@@ -8,7 +8,7 @@
         "activeTab"
     ],
     "action": {
-        "default_popup": "popup.html",
+        "default_popup": "src/popup/popup.html",
         "default_icon": {
             "16": "icons/icon16.png",
             "48": "icons/icon48.png",
@@ -20,9 +20,10 @@
         "48": "icons/icon48.png",
         "128": "icons/icon128.png"
     },
-    "options_page": "options.html",
+    "options_page": "src/options/options.html",
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "src/background/background.js",
+        "type": "module"
     },
     "content_scripts": [
         {
@@ -32,7 +33,7 @@
                 "https://gemini.google.com/*"
             ],
             "css": [
-                "content.css"
+                "src/content/content.css"
             ],
             "run_at": "document_start"
         },
@@ -43,7 +44,7 @@
                 "https://gemini.google.com/*"
             ],
             "js": [
-                "content.js"
+                "src/content/content.js"
             ],
             "run_at": "document_end"
         },
@@ -52,7 +53,7 @@
                 "https://www.amazon.co.jp/*"
             ],
             "css": [
-                "content.css"
+                "src/content/content.css"
             ],
             "run_at": "document_start"
         },
@@ -61,7 +62,7 @@
                 "https://www.amazon.co.jp/*"
             ],
             "js": [
-                "content.js"
+                "src/content/content.js"
             ],
             "run_at": "document_end"
         }
