@@ -1,0 +1,32 @@
+{
+    "version": "1.0",
+    "domains": {
+        "google": {
+            "name": "Google検索",
+            "matches": [
+                "www.google.com",
+                "www.google.co.jp"
+            ],
+            "enabled": true,
+            "selectors": [
+                ".O4T6Pe",
+                ".vqkKIe",
+                ".eKPi4",
+                "update-location",
+                ".dfB0uf"
+            ]
+        },
+        "amazon": {
+            "name": "Amazon.co.jp",
+            "matches": [
+                "www.amazon.co.jp"
+            ],
+            "enabled": true,
+            "selectors": []
+        }
+    },
+    "userRules": {
+        "keywords": [],
+        "patterns": []
+    }
+}
