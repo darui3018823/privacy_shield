@@ -2,7 +2,9 @@
 .vqkKIe,
 .eKPi4,
 update-location,
-.dfB0uf {
+.dfB0uf,
+location-footer,
+.location-menu-item-container {
   display: none !important;
 }
 
@@ -10,7 +12,9 @@ body.privacy-guard-paused .O4T6Pe,
 body.privacy-guard-paused .vqkKIe,
 body.privacy-guard-paused .eKPi4,
 body.privacy-guard-paused update-location,
-body.privacy-guard-paused .dfB0uf {
+body.privacy-guard-paused .dfB0uf,
+body.privacy-guard-paused location-footer,
+body.privacy-guard-paused .location-menu-item-container {
   display: block !important;
 }
 

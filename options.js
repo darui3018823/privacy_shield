@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             name: 'Google Gemini',
             matches: ['gemini.google.com'],
             enabled: true,
-            selectors: []
+            selectors: ['location-footer', '.location-menu-item-container']
         },
         amazon: {
             name: 'Amazon.co.jp',
