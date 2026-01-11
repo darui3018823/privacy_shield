@@ -37,5 +37,24 @@ jobs:
           files: build/privacy-shield.zip
           draft: false
           prerelease: false
+          generate_release_notes: true
+          body: |
+            # Privacy Shield v${{ github.ref_name }}
+
+            ## 📦 Assets
+            - **privacy-shield.zip** - Browser Extension
+
+            ## 🔧 Installation
+            1. Download `privacy-shield.zip`
+            2. Extract to a folder
+            3. Open your browser's extension settings
+            4. Enable "Developer mode"
+            5. Load unpacked extension from the folder
+
+            ## 📝 Features
+            - 🔍 Flexible Rule Engine
+            - 🎯 CSS Selectors, Keywords & Regex patterns
+            - 🔐 Privacy Protection for Google & Amazon
+            - ⚙️ Customizable rules
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
