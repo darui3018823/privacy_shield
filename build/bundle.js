@@ -5,21 +5,46 @@ const path = require('path');
 const buildDir = path.join(__dirname, '..');
 
 // Files to copy from src/ to root
-const filesToCopy = [
-  { src: 'src/background/background.js', dest: 'background.js' },
-  { src: 'src/popup/popup.js', dest: 'popup.js' },
-  { src: 'src/popup/popup.html', dest: 'popup.html' },
-  { src: 'src/popup/popup.css', dest: 'popup.css' },
-  { src: 'src/options/options.js', dest: 'options.js' },
-  { src: 'src/options/options.html', dest: 'options.html' },
-  { src: 'src/options/options.css', dest: 'options.css' },
-  { src: 'src/content/content.js', dest: 'content.js' },
-  { src: 'src/content/content.css', dest: 'content.css' },
-];
+
+
+const esbuild = require('esbuild');
 
 console.log('🔨 Building Privacy Shield extension...');
 
-// Copy files from src/ to root
+// JS files to bundle
+const entryPoints = [
+  'src/background/background.js',
+  'src/content/content.js',
+  'src/popup/popup.js',
+  'src/options/options.js'
+];
+
+try {
+  esbuild.buildSync({
+    entryPoints,
+    bundle: true,
+    outdir: buildDir,
+    minify: false, // Keep readable for review, or set to true for production
+    sourcemap: true,
+    target: ['chrome96'], // Target modern Chrome
+    format: 'iife' // Immediately Invoked Function Expression for direct browser execution
+  });
+  console.log(`✓ Bundled JS files: ${entryPoints.map(p => path.basename(p)).join(', ')}`);
+} catch (error) {
+  console.error('✗ JS Build failed:', error);
+  process.exit(1);
+}
+
+// Asset files to copy
+const filesToCopy = [
+  { src: 'src/popup/popup.html', dest: 'popup.html' },
+  { src: 'src/popup/popup.css', dest: 'popup.css' },
+  { src: 'src/options/options.html', dest: 'options.html' },
+  { src: 'src/options/options.css', dest: 'options.css' },
+  { src: 'src/content/content.css', dest: 'content.css' }
+];
+
+// Copy assets
 filesToCopy.forEach(({ src, dest }) => {
   const srcPath = path.join(buildDir, src);
   const destPath = path.join(buildDir, dest);

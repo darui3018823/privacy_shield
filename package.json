@@ -1,6 +1,6 @@
 {
   "name": "universal-privacy-shield",
-  "version": "2.2.4",
+  "version": "2.3.0",
   "description": "Privacy information concealment extension",
   "private": true,
   "scripts": {
@@ -13,6 +13,7 @@
     "version:major": "node update-version.js major"
   },
   "devDependencies": {
+    "esbuild": "^0.27.2",
     "nodemon": "^3.1.0"
   },
   "keywords": [
