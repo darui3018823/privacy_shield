@@ -16,7 +16,7 @@ const init = async () => {
   try {
     const elements = getUIElements();
     const tab = await getCurrentTab();
-    
+
     setupDomainInfo(elements, tab);
     await loadState(elements);
     setupEventListeners(elements);
@@ -65,7 +65,7 @@ const getCurrentTab = async () => {
 const setupDomainInfo = (elements, tab) => {
   try {
     const url = new URL(tab.url);
-    const tabDomain = url.hostname.replace('www.', '');
+    const tabDomain = url.hostname;
 
     // Set display name
     const displayName = getDomainDisplayName(tabDomain);
@@ -94,7 +94,7 @@ const setupDomainInfo = (elements, tab) => {
  */
 const setupFavicon = (faviconUrl) => {
   const domainIconContainer = document.querySelector('.domain-icon');
-  
+
   if (faviconUrl) {
     domainIconContainer.innerHTML = `<img src="${faviconUrl}" alt="favicon">`;
   } else {
@@ -170,7 +170,7 @@ const setupEventListeners = (elements) => {
     const isActive = e.target.checked;
     await StorageManager.setIsPaused(!isActive);
     updateStatusUI(elements, isActive);
-    
+
     if (!isActive) {
       chrome.action.setBadgeText({ text: '' });
     }
