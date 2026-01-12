@@ -1,0 +1,29 @@
+{
+  "name": "universal-privacy-shield",
+  "version": "2.0.1",
+  "description": "Privacy information concealment extension",
+  "private": true,
+  "scripts": {
+    "build": "node build/bundle.js",
+    "watch": "nodemon --watch src/ --ext js,json,css,html --exec \"npm run build\"",
+    "lint": "echo 'No linting configured yet'",
+    "test": "echo 'No tests configured yet'",
+    "version:patch": "node update-version.js patch",
+    "version:minor": "node update-version.js minor",
+    "version:major": "node update-version.js major"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "keywords": [
+    "privacy",
+    "chrome-extension",
+    "browser-extension"
+  ],
+  "author": "darui3018823",
+  "license": "SEE LICENSE FILE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darui3018823/privacy_shield.git"
+  }
+}

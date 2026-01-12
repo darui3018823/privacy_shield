@@ -9,7 +9,15 @@ hide_location/
 
 # Build outputs
 build/
+!build/bundle.js
 dist/
+
+# Bundled outputs in root  
+/background.js  
+/content.js  
+/options.js  
+/popup.js  
+
 
 # IDE
 .vscode/settings.json

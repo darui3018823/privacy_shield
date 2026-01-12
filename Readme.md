@@ -68,3 +68,94 @@ BSD 2-Clause License - See [LICENSE](License) for details.
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Development
+
+### Project Structure
+
+The project uses a modular ES6 structure for development:
+
+```
+privacy_shield/
+├── src/
+│   ├── config/
+│   │   ├── constants.js      # Constants and configuration values
+│   │   └── config.js          # Domain configuration
+│   ├── utils/
+│   │   ├── storage.js         # StorageManager class
+│   │   ├── rules.js           # RulesManager class
+│   │   ├── logger.js          # Logger utility
+│   │   └── helpers.js         # Helper functions
+│   ├── content/
+│   │   ├── content.js         # Content script (modular)
+│   │   └── content.css        # Content styles
+│   ├── background/
+│   │   └── background.js      # Background service worker (modular)
+│   ├── popup/
+│   │   ├── popup.js           # Popup script (modular)
+│   │   ├── popup.html         # Popup UI
+│   │   └── popup.css          # Popup styles
+│   └── options/
+│       ├── options.js         # Options script (modular)
+│       ├── options.html       # Options UI
+│       └── options.css        # Options styles
+├── build/
+│   ├── bundle.js              # Build script
+│   └── README.md              # Build documentation
+├── content.js                 # Bundled content script
+├── background.js              # Bundled background script
+├── popup.js                   # Bundled popup script
+├── options.js                 # Bundled options script
+└── manifest.json              # Extension manifest
+```
+
+### Building
+
+The extension requires bundling ES6 modules into standalone files:
+
+```bash
+# Build once
+npm run build
+
+# Or use node directly
+node build/bundle.js
+```
+
+### Development Workflow
+
+1. **Edit source files** in `src/` directories
+2. **Run build** to generate bundled files: `npm run build`
+3. **Reload extension** in browser
+4. **Test changes**
+
+### Code Organization
+
+#### Utility Modules
+
+- **StorageManager** (`src/utils/storage.js`) - Unified chrome.storage operations
+- **RulesManager** (`src/utils/rules.js`) - Rule loading and processing
+- **Logger** (`src/utils/logger.js`) - Unified error handling and logging
+- **Helpers** (`src/utils/helpers.js`) - Common utility functions
+
+#### Configuration
+
+- **constants.js** - Magic numbers, delays, and fixed values
+- **config.js** - Domain configurations and supported domains list
+
+#### Benefits of This Structure
+
+- ✅ **Modularity** - Each file has a single responsibility
+- ✅ **Reusability** - Shared code in utility modules
+- ✅ **Maintainability** - Easy to find and update code
+- ✅ **Testability** - Small, focused modules are easier to test
+- ✅ **Documentation** - JSDoc comments on all functions
+- ✅ **Type Safety** - Clear function signatures and return types
+
+### Coding Standards
+
+- Use JSDoc comments for all functions
+- Follow single responsibility principle
+- Handle errors with try-catch and Logger
+- Use constants instead of magic numbers
+- Prefer ES6+ syntax (const, arrow functions, async/await)
+

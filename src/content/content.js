@@ -1,27 +1,94 @@
+/**
+ * Content script for Privacy Shield extension
+ * Handles detection and hiding of privacy-sensitive content on web pages
+ * @module content
+ */
+
+import { StorageManager } from '../utils/storage.js';
+import { RulesManager } from '../utils/rules.js';
+import { Logger } from '../utils/logger.js';
+import {
+  truncateText,
+  findTargetElement,
+  isElementHidden,
+  waitForDOMReady,
+  sendMessageSafely,
+  debounce
+} from '../utils/helpers.js';
+import {
+  MAX_TEXT_LENGTH_SMALL,
+  MAX_TEXT_LENGTH_LARGE,
+  SAVE_DEBOUNCE_DELAY,
+  TOAST_DURATION,
+  TOAST_ANIMATION_DURATION,
+  MESSAGE_TYPES
+} from '../config/constants.js';
+
 (() => {
   'use strict';
 
+  // State variables
   let isPaused = false;
   let hiddenItemsSet = new Set();
-  let updateTimeout = null;
   let toastShown = false;
   let currentDomainRules = null;
   let userRules = null;
 
+  /**
+   * Initialize the content script
+   */
   const init = async () => {
-    const stored = await chrome.storage.local.get(['isPaused', 'rules', 'userRules']);
-    isPaused = stored.isPaused || false;
-    userRules = stored.userRules || { keywords: [], patterns: [] };
+    try {
+      await loadState();
+      await loadDomainRules();
+      updateBodyClass();
 
-    await loadDomainRules();
+      if (!isPaused) {
+        runHidingLogic();
+      }
 
-    updateBodyClass();
-    if (!isPaused) {
-      runHidingLogic();
+      setupStorageListener();
+      setupMutationObserver();
+    } catch (error) {
+      Logger.error('Failed to initialize content script', error);
     }
+  };
 
+  /**
+   * Load initial state from storage
+   */
+  const loadState = async () => {
+    try {
+      isPaused = await StorageManager.getIsPaused();
+      userRules = await StorageManager.getUserRules();
+    } catch (error) {
+      Logger.error('Failed to load state', error);
+    }
+  };
+
+  /**
+   * Load domain-specific rules for the current page
+   */
+  const loadDomainRules = async () => {
+    try {
+      const hostname = window.location.hostname;
+      currentDomainRules = await RulesManager.loadDomainRules(hostname);
+    } catch (error) {
+      Logger.error('Failed to load domain rules', error);
+    }
+  };
+
+  /**
+   * Setup listener for storage changes
+   */
+  const setupStorageListener = () => {
     chrome.storage.onChanged.addListener(handleStorageChange);
+  };
 
+  /**
+   * Setup mutation observer to watch for DOM changes
+   */
+  const setupMutationObserver = () => {
     const observer = new MutationObserver(() => {
       if (!isPaused) {
         runHidingLogic();
@@ -30,32 +97,11 @@
     observer.observe(document.body, { childList: true, subtree: true });
   };
 
-  const loadDomainRules = async () => {
-    try {
-      const stored = await chrome.storage.local.get(['domainRules']);
-      const hostname = window.location.hostname;
-
-      if (stored.domainRules) {
-        for (const [key, domain] of Object.entries(stored.domainRules)) {
-          if (domain.matches && domain.matches.some(m => hostname.includes(m))) {
-            currentDomainRules = domain;
-            return;
-          }
-        }
-      }
-
-      const defaultRules = await fetch(chrome.runtime.getURL('rules.json')).then(r => r.json());
-      for (const [key, domain] of Object.entries(defaultRules.domains)) {
-        if (domain.matches && domain.matches.some(m => hostname.includes(m))) {
-          currentDomainRules = domain;
-          return;
-        }
-      }
-    } catch (e) {
-      console.error('[Privacy Guard] Failed to load rules:', e);
-    }
-  };
-
+  /**
+   * Handle storage change events
+   * @param {Object} changes - Changed storage items
+   * @param {string} area - Storage area name
+   */
   const handleStorageChange = (changes, area) => {
     if (area !== 'local') return;
 
@@ -86,6 +132,9 @@
     }
   };
 
+  /**
+   * Update body class based on paused state
+   */
   const updateBodyClass = () => {
     if (isPaused) {
       document.body.classList.add('privacy-guard-paused');
@@ -94,6 +143,9 @@
     }
   };
 
+  /**
+   * Unhide all previously hidden elements
+   */
   const unhideAll = () => {
     document.querySelectorAll('[data-privacy-hidden]').forEach(el => {
       el.style.display = '';
@@ -101,28 +153,44 @@
     });
   };
 
+  /**
+   * Update badge count in the extension icon
+   * @param {number} count - Number of hidden items
+   */
   const updateBadge = (count) => {
+    sendMessageSafely({ type: MESSAGE_TYPES.UPDATE_COUNT, count });
+  };
+
+  /**
+   * Save hidden items to storage
+   */
+  const saveHiddenItems = async () => {
     try {
-      chrome.runtime.sendMessage({ type: 'UPDATE_COUNT', count });
-    } catch (e) {
+      await StorageManager.setHiddenData(hiddenItemsSet.size, Array.from(hiddenItemsSet));
+      updateBadge(hiddenItemsSet.size);
+    } catch (error) {
+      Logger.error('Failed to save hidden items', error);
     }
   };
 
-  const saveHiddenItems = () => {
-    chrome.storage.local.set({
-      hiddenCount: hiddenItemsSet.size,
-      hiddenItems: Array.from(hiddenItemsSet)
-    });
-    updateBadge(hiddenItemsSet.size);
-  };
+  /**
+   * Debounced save function
+   */
+  const debouncedSaveHiddenItems = debounce(saveHiddenItems, SAVE_DEBOUNCE_DELAY);
 
+  /**
+   * Hide an element and track it
+   * @param {HTMLElement} el - Element to hide
+   * @param {string} reason - Reason for hiding
+   * @returns {boolean} True if element was newly hidden
+   */
   const hideElement = (el, reason) => {
-    if (el.style.display === 'none' || el.hasAttribute('data-privacy-hidden')) return false;
+    if (isElementHidden(el)) return false;
 
     el.style.display = 'none';
     el.setAttribute('data-privacy-hidden', 'true');
 
-    const itemText = el.innerText?.substring(0, 50) || reason || 'Hidden Item';
+    const itemText = truncateText(el.innerText) || reason || 'Hidden Item';
     if (!hiddenItemsSet.has(itemText)) {
       hiddenItemsSet.add(itemText);
       return true;
@@ -130,6 +198,11 @@
     return false;
   };
 
+  /**
+   * Hide elements matching CSS selectors
+   * @param {Array<string>} selectors - CSS selectors to match
+   * @returns {boolean} True if any elements were hidden
+   */
   const hideBySelectors = (selectors) => {
     let changed = false;
     selectors.forEach(selector => {
@@ -140,12 +213,18 @@
             changed = true;
           }
         });
-      } catch (e) {
+      } catch (error) {
+        Logger.warn(`Invalid selector: ${selector}`, error);
       }
     });
     return changed;
   };
 
+  /**
+   * Hide elements containing specific keywords
+   * @param {Array<string>} keywords - Keywords to search for
+   * @returns {boolean} True if any elements were hidden
+   */
   const hideByKeywords = (keywords) => {
     if (!keywords || keywords.length === 0) return false;
 
@@ -164,14 +243,7 @@
 
       for (const keyword of keywords) {
         if (text && text.includes(keyword)) {
-          let target = node.parentElement;
-          while (target && target.innerText && target.innerText.length < 100) {
-            if (target.parentElement && target.parentElement.innerText.length < 200) {
-              target = target.parentElement;
-            } else {
-              break;
-            }
-          }
+          const target = findTargetElement(node, MAX_TEXT_LENGTH_SMALL, MAX_TEXT_LENGTH_LARGE);
           if (target && !target.hasAttribute('data-privacy-hidden')) {
             nodesToHide.push({ el: target, keyword });
           }
@@ -189,20 +261,18 @@
     return changed;
   };
 
+  /**
+   * Hide elements matching regex patterns
+   * @param {Array<string>} patterns - Regex patterns to match
+   * @returns {boolean} True if any elements were hidden
+   */
   const hideByPatterns = (patterns) => {
     if (!patterns || patterns.length === 0) return false;
 
-    let changed = false;
-    const regexes = patterns.map(p => {
-      try {
-        return new RegExp(p, 'g');
-      } catch (e) {
-        return null;
-      }
-    }).filter(Boolean);
-
+    const regexes = RulesManager.compilePatterns(patterns);
     if (regexes.length === 0) return false;
 
+    let changed = false;
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_TEXT,
@@ -217,14 +287,7 @@
 
       for (const regex of regexes) {
         if (text && regex.test(text)) {
-          let target = node.parentElement;
-          while (target && target.innerText && target.innerText.length < 100) {
-            if (target.parentElement && target.parentElement.innerText.length < 200) {
-              target = target.parentElement;
-            } else {
-              break;
-            }
-          }
+          const target = findTargetElement(node, MAX_TEXT_LENGTH_SMALL, MAX_TEXT_LENGTH_LARGE);
           if (target && !target.hasAttribute('data-privacy-hidden')) {
             nodesToHide.push({ el: target, pattern: regex.source });
           }
@@ -242,6 +305,9 @@
     return changed;
   };
 
+  /**
+   * Show toast notification
+   */
   const showToast = () => {
     if (toastShown) return;
     toastShown = true;
@@ -262,19 +328,22 @@
     requestAnimationFrame(() => {
       toast.classList.add('pg-toast-show');
     });
+
     setTimeout(() => {
       toast.classList.remove('pg-toast-show');
       toast.classList.add('pg-toast-hide');
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
+      setTimeout(() => toast.remove(), TOAST_ANIMATION_DURATION);
+    }, TOAST_DURATION);
   };
 
+  /**
+   * Run the main hiding logic
+   */
   const runHidingLogic = () => {
     if (isPaused || !currentDomainRules) return;
+    if (!RulesManager.isDomainEnabled(currentDomainRules)) return;
 
     let changed = false;
-
-    if (currentDomainRules.enabled === false) return;
 
     if (currentDomainRules.selectors) {
       if (hideBySelectors(currentDomainRules.selectors)) {
@@ -295,15 +364,11 @@
     }
 
     if (changed) {
-      if (updateTimeout) clearTimeout(updateTimeout);
-      updateTimeout = setTimeout(saveHiddenItems, 500);
+      debouncedSaveHiddenItems();
       showToast();
     }
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  // Initialize when DOM is ready
+  waitForDOMReady().then(init);
 })();
