@@ -7,7 +7,8 @@ location-footer,
 .location-menu-item-container,
 #nav-global-location-popover-link,
 #glow-ingress-block,
-[data-component="shippingAddress"] {
+[data-component="shippingAddress"],
+.a-column.a-span5:has([data-component="shippingAddress"]) {
   display: none !important;
 }
 
@@ -20,7 +21,8 @@ body.privacy-guard-paused location-footer,
 body.privacy-guard-paused .location-menu-item-container,
 body.privacy-guard-paused #nav-global-location-popover-link,
 body.privacy-guard-paused #glow-ingress-block,
-body.privacy-guard-paused [data-component="shippingAddress"] {
+body.privacy-guard-paused [data-component="shippingAddress"],
+body.privacy-guard-paused .a-column.a-span5:has([data-component="shippingAddress"]) {
   display: block !important;
 }
 
