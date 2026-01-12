@@ -25,7 +25,12 @@ export const SUPPORTED_DOMAINS = {
     name: 'Amazon.co.jp',
     matches: ['www.amazon.co.jp'],
     enabled: true,
-    selectors: ['#nav-global-location-popover-link', '#glow-ingress-block']
+    selectors: [
+      '#nav-global-location-popover-link',
+      '#glow-ingress-block',
+      '#contextualIngressPtLabel',
+      '#contextualIngressPtLabel_deliveryShortLine'
+    ]
   }
 };
 

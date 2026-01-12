@@ -6,7 +6,9 @@ update-location,
 location-footer,
 .location-menu-item-container,
 #nav-global-location-popover-link,
-#glow-ingress-block {
+#glow-ingress-block,
+#contextualIngressPtLabel,
+#contextualIngressPtLabel_deliveryShortLine {
   display: none !important;
 }
 
@@ -18,7 +20,9 @@ body.privacy-guard-paused .dfB0uf,
 body.privacy-guard-paused location-footer,
 body.privacy-guard-paused .location-menu-item-container,
 body.privacy-guard-paused #nav-global-location-popover-link,
-body.privacy-guard-paused #glow-ingress-block {
+body.privacy-guard-paused #glow-ingress-block,
+body.privacy-guard-paused #contextualIngressPtLabel,
+body.privacy-guard-paused #contextualIngressPtLabel_deliveryShortLine {
   display: block !important;
 }
 
