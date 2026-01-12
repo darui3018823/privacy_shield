@@ -1,0 +1,40 @@
+const fs = require('fs');
+const path = require('path');
+
+// Ensure the build directory exists
+const buildDir = path.join(__dirname, '..');
+
+// Files to copy from src/ to root
+const filesToCopy = [
+  { src: 'src/background/background.js', dest: 'background.js' },
+  { src: 'src/popup/popup.js', dest: 'popup.js' },
+  { src: 'src/popup/popup.html', dest: 'popup.html' },
+  { src: 'src/popup/popup.css', dest: 'popup.css' },
+  { src: 'src/options/options.js', dest: 'options.js' },
+  { src: 'src/options/options.html', dest: 'options.html' },
+  { src: 'src/options/options.css', dest: 'options.css' },
+  { src: 'src/content/content.js', dest: 'content.js' },
+  { src: 'src/content/content.css', dest: 'content.css' },
+];
+
+console.log('🔨 Building Privacy Shield extension...');
+
+// Copy files from src/ to root
+filesToCopy.forEach(({ src, dest }) => {
+  const srcPath = path.join(buildDir, src);
+  const destPath = path.join(buildDir, dest);
+
+  try {
+    if (fs.existsSync(srcPath)) {
+      fs.copyFileSync(srcPath, destPath);
+      console.log(`✓ Copied ${src} to ${dest}`);
+    } else {
+      console.warn(`⚠ Source file not found: ${src}`);
+    }
+  } catch (error) {
+    console.error(`✗ Error copying ${src}:`, error.message);
+    process.exit(1);
+  }
+});
+
+console.log('✓ Build complete!');

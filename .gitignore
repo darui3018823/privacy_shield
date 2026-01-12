@@ -8,7 +8,7 @@ node_modules/
 hide_location/
 
 # Build outputs
-build/
+build/*
 !build/bundle.js
 dist/
 
@@ -17,7 +17,7 @@ dist/
 /content.js  
 /options.js  
 /popup.js  
-
+/content.css
 
 # IDE
 .vscode/settings.json
