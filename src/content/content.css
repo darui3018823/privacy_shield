@@ -180,12 +180,14 @@ div.shippingAddress::before {
   font-size: 12px !important;
   color: #555 !important;
   background: #f0f2f2 !important;
-  padding: 4px 8px !important;
+  padding: 4px 10px !important;
   border-radius: 4px !important;
-  border: 1px solid #d5d9d9 !important;
+  border: 1px solid #b0b0b0 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
   display: inline-block !important;
   white-space: nowrap !important;
   visibility: visible !important;
+  line-height: 1.4 !important;
 }
 
 /* Paused state for shipping address (alternate) */
