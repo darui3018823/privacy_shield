@@ -6,7 +6,8 @@ update-location,
 location-footer,
 .location-menu-item-container,
 #nav-global-location-popover-link,
-#glow-ingress-block {
+#glow-ingress-block,
+[data-component="shippingAddress"] {
   display: none !important;
 }
 
@@ -18,7 +19,8 @@ body.privacy-guard-paused .dfB0uf,
 body.privacy-guard-paused location-footer,
 body.privacy-guard-paused .location-menu-item-container,
 body.privacy-guard-paused #nav-global-location-popover-link,
-body.privacy-guard-paused #glow-ingress-block {
+body.privacy-guard-paused #glow-ingress-block,
+body.privacy-guard-paused [data-component="shippingAddress"] {
   display: block !important;
 }
 
