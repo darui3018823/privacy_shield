@@ -18,15 +18,21 @@ export function escapeHtml(text) {
 
 /**
  * Truncate text to a maximum length
+ * Normalizes whitespace (including newlines) to single spaces for display
  * @param {string} text - Text to truncate
  * @param {number} [maxLength=PREVIEW_TEXT_LENGTH] - Maximum length
- * @returns {string} Truncated text
+ * @returns {string} Truncated text with normalized whitespace
  */
 export function truncateText(text, maxLength = PREVIEW_TEXT_LENGTH) {
-  if (!text || text.length <= maxLength) {
-    return text;
+  if (!text) return text;
+
+  // Normalize whitespace: replace all consecutive whitespace (including newlines) with a single space
+  const normalized = text.replace(/\s+/g, ' ').trim();
+
+  if (normalized.length <= maxLength) {
+    return normalized;
   }
-  return text.substring(0, maxLength);
+  return normalized.substring(0, maxLength) + '…';
 }
 
 /**
