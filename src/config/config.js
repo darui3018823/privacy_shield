@@ -28,6 +28,7 @@ export const SUPPORTED_DOMAINS = {
     selectors: [
       '#nav-global-location-popover-link',
       '#glow-ingress-block',
+      '#contextualIngressPtLink',
       '#contextualIngressPtLabel',
       '#contextualIngressPtLabel_deliveryShortLine'
     ]

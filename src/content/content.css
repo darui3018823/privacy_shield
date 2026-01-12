@@ -23,15 +23,16 @@ body.privacy-guard-paused #glow-ingress-block {
 }
 
 /* Amazon Product Page Masking */
-#contextualIngressPtLabel,
-#contextualIngressPtLabel_deliveryShortLine {
+#contextualIngressPtLink {
   visibility: hidden !important;
   position: relative !important;
   display: inline-block !important;
+  pointer-events: none !important;
+  /* Disable clicks */
+  text-decoration: none !important;
 }
 
-#contextualIngressPtLabel::after,
-#contextualIngressPtLabel_deliveryShortLine::after {
+#contextualIngressPtLink::after {
   content: "Hidden by Privacy Shield";
   visibility: visible !important;
   position: absolute;
@@ -41,22 +42,25 @@ body.privacy-guard-paused #glow-ingress-block {
   color: #555;
   font-size: 12px;
   background: #f0f2f2;
-  padding: 2px 4px;
-  border-radius: 2px;
+  padding: 4px 8px;
+  /* Slightly larger padding for button look */
+  border-radius: 4px;
   border: 1px solid #d5d9d9;
   z-index: 10;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 /* Paused state for masked items */
-body.privacy-guard-paused #contextualIngressPtLabel,
-body.privacy-guard-paused #contextualIngressPtLabel_deliveryShortLine {
+body.privacy-guard-paused #contextualIngressPtLink {
   visibility: visible !important;
   display: inline-block !important;
+  pointer-events: auto !important;
 }
 
-body.privacy-guard-paused #contextualIngressPtLabel::after,
-body.privacy-guard-paused #contextualIngressPtLabel_deliveryShortLine::after {
+body.privacy-guard-paused #contextualIngressPtLink::after {
   content: none !important;
   display: none !important;
 }
