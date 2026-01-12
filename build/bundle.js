@@ -12,12 +12,12 @@ const esbuild = require('esbuild');
 console.log('🔨 Building Privacy Shield extension...');
 
 // JS files to bundle
-const entryPoints = [
-  'src/background/background.js',
-  'src/content/content.js',
-  'src/popup/popup.js',
-  'src/options/options.js'
-];
+const entryPoints = {
+  background: 'src/background/background.js',
+  content: 'src/content/content.js',
+  popup: 'src/popup/popup.js',
+  options: 'src/options/options.js'
+};
 
 try {
   esbuild.buildSync({
@@ -29,7 +29,7 @@ try {
     target: ['chrome96'], // Target modern Chrome
     format: 'iife' // Immediately Invoked Function Expression for direct browser execution
   });
-  console.log(`✓ Bundled JS files: ${entryPoints.map(p => path.basename(p)).join(', ')}`);
+  console.log(`✓ Bundled JS files: ${Object.keys(entryPoints).join(', ')}`);
 } catch (error) {
   console.error('✗ JS Build failed:', error);
   process.exit(1);
