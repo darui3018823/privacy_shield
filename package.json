@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "node build/bundle.js",
-    "watch": "node build/bundle.js && echo 'Watching for changes...' && while true; do inotifywait -qq -r -e modify src/ && node build/bundle.js; done",
+    "watch": "nodemon --watch src/ --ext js,json,css,html --exec \"npm run build\"",
     "lint": "echo 'No linting configured yet'",
     "test": "echo 'No tests configured yet'",
     "version:patch": "node update-version.js patch",
