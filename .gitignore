@@ -17,7 +17,7 @@ dist/
 /content.js  
 /options.js  
 /popup.js  
-
+/content.css
 
 # IDE
 .vscode/settings.json
