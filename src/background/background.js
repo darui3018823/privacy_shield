@@ -31,12 +31,12 @@ const setBadge = (text, color, tabId = null) => {
   const options = { text };
   if (tabId) options.tabId = tabId;
   
-  chrome.action.setBadgeText(options);
+  chrome.action.setBadgeText(options).catch(error => Logger.debug('Failed to set badge text.', error));
   
   const colorOptions = { color };
   if (tabId) colorOptions.tabId = tabId;
   
-  chrome.action.setBadgeBackgroundColor(colorOptions);
+  chrome.action.setBadgeBackgroundColor(colorOptions).catch(error => Logger.debug('Failed to set badge background color.', error));
 };
 
 /**
