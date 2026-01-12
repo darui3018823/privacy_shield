@@ -6,9 +6,7 @@ update-location,
 location-footer,
 .location-menu-item-container,
 #nav-global-location-popover-link,
-#glow-ingress-block,
-[data-component="shippingAddress"],
-.a-column.a-span5:has([data-component="shippingAddress"]) {
+#glow-ingress-block {
   display: none !important;
 }
 
@@ -20,9 +18,7 @@ body.privacy-guard-paused .dfB0uf,
 body.privacy-guard-paused location-footer,
 body.privacy-guard-paused .location-menu-item-container,
 body.privacy-guard-paused #nav-global-location-popover-link,
-body.privacy-guard-paused #glow-ingress-block,
-body.privacy-guard-paused [data-component="shippingAddress"],
-body.privacy-guard-paused .a-column.a-span5:has([data-component="shippingAddress"]) {
+body.privacy-guard-paused #glow-ingress-block {
   display: block !important;
 }
 
@@ -86,6 +82,42 @@ body.privacy-guard-paused :has(> .insert-encrypted-trigger-text) {
 
 body.privacy-guard-paused #contextualIngressPtLink::after,
 body.privacy-guard-paused .insert-encrypted-trigger-text::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Amazon Order Details - Shipping Address Masking */
+[data-component="shippingAddress"] ul {
+  visibility: hidden !important;
+  position: relative !important;
+  pointer-events: none !important;
+  min-height: 2em;
+}
+
+[data-component="shippingAddress"] ul::after {
+  content: "Hidden by Privacy Shield";
+  visibility: visible !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  color: #555;
+  font-size: 12px;
+  background: #f0f2f2;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #d5d9d9;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Paused state for shipping address */
+body.privacy-guard-paused [data-component="shippingAddress"] ul {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+body.privacy-guard-paused [data-component="shippingAddress"] ul::after {
   content: none !important;
   display: none !important;
 }
