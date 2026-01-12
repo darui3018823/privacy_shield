@@ -155,41 +155,59 @@ body.privacy-guard-paused .pt-delivery-card-trackingId::before {
 }
 
 /* Amazon Order Details - Shipping Address (alternate structure) */
-.shippingAddress {
-  font-size: 0 !important;
-  color: transparent !important;
+.shippingAddress,
+.a-row.shippingAddress,
+div.shippingAddress {
   position: relative !important;
   display: block !important;
-  min-height: 24px !important;
+  min-height: 28px !important;
 }
 
-.shippingAddress * {
-  display: none !important;
+.shippingAddress p,
+.a-row.shippingAddress p,
+div.shippingAddress p {
+  visibility: hidden !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
 }
 
-.shippingAddress::before {
-  content: "Hidden by Privacy Shield";
+.shippingAddress::before,
+.a-row.shippingAddress::before,
+div.shippingAddress::before {
+  content: "Hidden by Privacy Shield" !important;
   font-size: 12px !important;
   color: #555 !important;
-  background: #f0f2f2;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid #d5d9d9;
+  background: #f0f2f2 !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  border: 1px solid #d5d9d9 !important;
   display: inline-block !important;
-  white-space: nowrap;
+  white-space: nowrap !important;
+  visibility: visible !important;
 }
 
 /* Paused state for shipping address (alternate) */
-body.privacy-guard-paused .shippingAddress {
-  font-size: inherit !important;
-  color: inherit !important;
+body.privacy-guard-paused .shippingAddress,
+body.privacy-guard-paused .a-row.shippingAddress,
+body.privacy-guard-paused div.shippingAddress {
+  min-height: auto !important;
 }
 
-body.privacy-guard-paused .shippingAddress * {
-  display: block !important;
+body.privacy-guard-paused .shippingAddress p,
+body.privacy-guard-paused .a-row.shippingAddress p,
+body.privacy-guard-paused div.shippingAddress p {
+  visibility: visible !important;
+  height: auto !important;
+  margin: revert !important;
+  padding: revert !important;
+  overflow: visible !important;
 }
 
-body.privacy-guard-paused .shippingAddress::before {
+body.privacy-guard-paused .shippingAddress::before,
+body.privacy-guard-paused .a-row.shippingAddress::before,
+body.privacy-guard-paused div.shippingAddress::before {
   content: none !important;
   display: none !important;
 }
