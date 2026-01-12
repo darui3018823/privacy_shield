@@ -25,7 +25,7 @@ try {
     bundle: true,
     outdir: buildDir,
     minify: false, // Keep readable for review, or set to true for production
-    sourcemap: true,
+    sourcemap: false,
     target: ['chrome96'], // Target modern Chrome
     format: 'iife' // Immediately Invoked Function Expression for direct browser execution
   });

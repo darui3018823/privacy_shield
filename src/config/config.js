@@ -27,11 +27,7 @@ export const SUPPORTED_DOMAINS = {
     enabled: true,
     selectors: [
       '#nav-global-location-popover-link',
-      '#glow-ingress-block',
-      '#contextualIngressPtLink',
-      '#contextualIngressPtLabel',
-      '#contextualIngressPtLabel_deliveryShortLine',
-      '.insert-encrypted-trigger-text'
+      '#glow-ingress-block'
     ]
   }
 };

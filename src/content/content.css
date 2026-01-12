@@ -33,6 +33,18 @@ body.privacy-guard-paused #glow-ingress-block {
   text-decoration: none !important;
 }
 
+/* Ensure hidden on hover */
+#contextualIngressPtLink:hover,
+.insert-encrypted-trigger-text:hover {
+  visibility: hidden !important;
+}
+
+/* Disable interaction on parent wrapper to prevent popovers */
+:has(> #contextualIngressPtLink),
+:has(> .insert-encrypted-trigger-text) {
+  pointer-events: none !important;
+}
+
 #contextualIngressPtLink::after,
 .insert-encrypted-trigger-text::after {
   content: "Hidden by Privacy Shield";
@@ -50,7 +62,7 @@ body.privacy-guard-paused #glow-ingress-block {
   border: 1px solid #d5d9d9;
   z-index: 10;
   pointer-events: none;
-  display: flex;
+  display: flex !important;
   align-items: center;
   height: 100%;
 }
@@ -60,6 +72,11 @@ body.privacy-guard-paused #contextualIngressPtLink,
 body.privacy-guard-paused .insert-encrypted-trigger-text {
   visibility: visible !important;
   display: inline-block !important;
+  pointer-events: auto !important;
+}
+
+body.privacy-guard-paused :has(> #contextualIngressPtLink),
+body.privacy-guard-paused :has(> .insert-encrypted-trigger-text) {
   pointer-events: auto !important;
 }
 
