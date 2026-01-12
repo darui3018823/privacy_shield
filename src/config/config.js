@@ -27,7 +27,8 @@ export const SUPPORTED_DOMAINS = {
     enabled: true,
     selectors: [
       '#nav-global-location-popover-link',
-      '#glow-ingress-block'
+      '#glow-ingress-block',
+      '[data-component="shippingAddress"]'
     ]
   }
 };
