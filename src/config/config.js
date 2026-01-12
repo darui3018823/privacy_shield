@@ -30,7 +30,8 @@ export const SUPPORTED_DOMAINS = {
       '#glow-ingress-block',
       '#contextualIngressPtLink',
       '#contextualIngressPtLabel',
-      '#contextualIngressPtLabel_deliveryShortLine'
+      '#contextualIngressPtLabel_deliveryShortLine',
+      '.insert-encrypted-trigger-text'
     ]
   }
 };
