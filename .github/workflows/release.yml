@@ -8,10 +8,25 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build extension
+        run: npm run build
 
       - name: Package Extension
         run: |
@@ -28,7 +43,7 @@ jobs:
             options.css \
             manifest.json \
             rules.json \
-            icons/ \
+            icons/
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
