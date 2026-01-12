@@ -72,4 +72,4 @@ class Logger {
   }
 }
 
-export { Logger, LogLevel };
+export { Logger };
