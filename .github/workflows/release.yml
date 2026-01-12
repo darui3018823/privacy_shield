@@ -48,36 +48,32 @@ jobs:
           fi
           
           echo "" >> CHANGELOG.md
-          echoRead Changelog
-        id: read_changelog
-        run: |
+          echo "" >> CHANGELOG.md
+          if [ -n "$PREV_TAG" ]; then
+            echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${CURRENT_TAG}" >> CHANGELOG.md
+          fi
+          
+          # Output changelog for use in release body
           CHANGELOG=$(cat CHANGELOG.md)
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
           echo "$CHANGELOG" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          files: build/privacy-shield.zip
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-          body: |
-            # Privacy Shield ${{ github.ref_name }}
-
-            ## 📦 Assets
-            - **privacy-shield.zip** - Browser Extension
-
-            ## 🔧 Installation
-            1. Download `privacy-shield.zip`
-            2. Extract to a folder
-            3. Open your browser's extension settings
-            4. Enable "Developer mode"
-            5. Load unpacked extension from the folder
-
-            ${{ steps.read_changelog.outputs.changelog }}
+      - name: Package Extension
+        run: |
+          mkdir -p build
+          zip -r build/privacy-shield.zip \
+            background.js \
+            content.js \
+            content.css \
+            popup.js \
+            popup.html \
+            popup.css \
+            options.js \
+            options.html \
+            options.css \
+            manifest.json \
+            rules.json \
             icons/
 
       - name: Create Release
@@ -100,6 +96,8 @@ jobs:
             3. Open your browser's extension settings
             4. Enable "Developer mode"
             5. Load unpacked extension from the folder
+
+            ${{ steps.changelog.outputs.changelog }}
 
             ## 📝 Features
             - 🔍 Flexible Rule Engine
