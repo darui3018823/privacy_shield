@@ -38,5 +38,3 @@ fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2) + '\n');
 
 console.log(`✅ Version updated: ${currentVersion} → ${newVersion}`);
 console.log(`📝 Updated package.json`);
-console.log(`🔗 Version page: http://localhost:3000/version`);
-console.log(`🔗 API endpoint: http://localhost:3000/api/version`);
