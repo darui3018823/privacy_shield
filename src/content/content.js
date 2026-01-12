@@ -12,7 +12,8 @@ import {
   findTargetElement,
   isElementHidden,
   waitForDOMReady,
-  sendMessageSafely
+  sendMessageSafely,
+  debounce
 } from '../utils/helpers.js';
 import {
   MAX_TEXT_LENGTH_SMALL,
@@ -29,7 +30,6 @@ import {
   // State variables
   let isPaused = false;
   let hiddenItemsSet = new Set();
-  let updateTimeout = null;
   let toastShown = false;
   let currentDomainRules = null;
   let userRules = null;
@@ -42,7 +42,7 @@ import {
       await loadState();
       await loadDomainRules();
       updateBodyClass();
-      
+
       if (!isPaused) {
         runHidingLogic();
       }
@@ -172,6 +172,11 @@ import {
       Logger.error('Failed to save hidden items', error);
     }
   };
+
+  /**
+   * Debounced save function
+   */
+  const debouncedSaveHiddenItems = debounce(saveHiddenItems, SAVE_DEBOUNCE_DELAY);
 
   /**
    * Hide an element and track it
@@ -323,7 +328,7 @@ import {
     requestAnimationFrame(() => {
       toast.classList.add('pg-toast-show');
     });
-    
+
     setTimeout(() => {
       toast.classList.remove('pg-toast-show');
       toast.classList.add('pg-toast-hide');
@@ -359,8 +364,7 @@ import {
     }
 
     if (changed) {
-      if (updateTimeout) clearTimeout(updateTimeout);
-      updateTimeout = setTimeout(saveHiddenItems, SAVE_DEBOUNCE_DELAY);
+      debouncedSaveHiddenItems();
       showToast();
     }
   };

@@ -44,12 +44,7 @@ export const DOMAIN_DISPLAY_NAMES = {
  * List of supported domain patterns for quick checks
  * @constant {Array<string>}
  */
-export const SUPPORTED_DOMAIN_PATTERNS = [
-  'google.com',
-  'google.co.jp',
-  'gemini.google.com',
-  'amazon.co.jp'
-];
+export const SUPPORTED_DOMAIN_PATTERNS = Object.values(SUPPORTED_DOMAINS).flatMap(d => d.matches);
 
 /**
  * Get the display name for a given domain

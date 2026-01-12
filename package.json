@@ -12,6 +12,9 @@
     "version:minor": "node update-version.js minor",
     "version:major": "node update-version.js major"
   },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
   "keywords": [
     "privacy",
     "chrome-extension",
