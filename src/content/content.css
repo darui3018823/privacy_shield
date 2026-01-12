@@ -309,3 +309,100 @@ body.privacy-guard-paused [data-privacy-hidden] {
   outline: 2px dashed rgba(239, 68, 68, 0.5) !important;
   outline-offset: 2px !important;
 }
+
+/* Amazon Checkout - Delivery Address Panel Masking */
+#deliver-to-customer-text,
+#deliver-to-address-text {
+  visibility: hidden !important;
+  position: relative !important;
+  display: block !important;
+  /* Override content.js display:none */
+  pointer-events: none !important;
+}
+
+#deliver-to-customer-text::before {
+  content: "お届け先: Hidden by Privacy Shield";
+  visibility: visible !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #555;
+  font-size: 14px;
+  /* Matches h2 size approx */
+  font-weight: bold;
+  background: #f0f2f2;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid #d5d9d9;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+#deliver-to-address-text::before {
+  content: "Hidden by Privacy Shield";
+  visibility: visible !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #555;
+  font-size: 12px;
+  background: #f0f2f2;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid #d5d9d9;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Paused state for Checkout Delivery Address */
+body.privacy-guard-paused #deliver-to-customer-text,
+body.privacy-guard-paused #deliver-to-address-text {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+body.privacy-guard-paused #deliver-to-customer-text::before,
+body.privacy-guard-paused #deliver-to-address-text::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Amazon Checkout - Address Selection Panel Masking */
+#shipping-address-selection-panel-card-id .destination-data-alignment {
+  visibility: hidden !important;
+  position: relative !important;
+  display: block !important;
+  pointer-events: none !important;
+  min-height: 4em;
+  /* Reserve space */
+}
+
+#shipping-address-selection-panel-card-id .destination-data-alignment::after {
+  content: "Hidden by Privacy Shield";
+  visibility: visible !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #555;
+  font-size: 13px;
+  background: #f0f2f2;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #d5d9d9;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Paused state for Address Selection Panel */
+body.privacy-guard-paused #shipping-address-selection-panel-card-id .destination-data-alignment {
+  visibility: visible !important;
+  pointer-events: auto !important;
+  min-height: auto !important;
+}
+
+body.privacy-guard-paused #shipping-address-selection-panel-card-id .destination-data-alignment::after {
+  content: none !important;
+  display: none !important;
+}

@@ -4,13 +4,16 @@ on:
   push:
     tags:
       - 'v*.*.*'
+      - 'v*.*.*-*'
+      - 'v*.*.*-*-*'
+
+permissions:
+  contents: write
 
 jobs:
   release:
+    name: Create Release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
 
     steps:
       - name: Checkout code
@@ -28,21 +31,53 @@ jobs:
       - name: Build extension
         run: npm run build
 
-      - name: Package Extension
+      - name: Generate changelog
+        id: changelog
         run: |
-          mkdir -p build
-          zip -r build/privacy-shield.zip \
-            background.js \
-            content.js \
-            content.css \
-            popup.js \
-            popup.html \
-            popup.css \
-            options.js \
-            options.html \
-            options.css \
-            manifest.json \
-            rules.json \
+          # Get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          CURRENT_TAG=${GITHUB_REF#refs/tags/}
+          
+          echo "## 📝 What's Changed" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          
+          if [ -n "$PREV_TAG" ]; then
+            git log ${PREV_TAG}..${CURRENT_TAG} --pretty=format:"* %s (%h)" --no-merges >> CHANGELOG.md
+          else
+            git log ${CURRENT_TAG} --pretty=format:"* %s (%h)" --no-merges >> CHANGELOG.md
+          fi
+          
+          echo "" >> CHANGELOG.md
+          echoRead Changelog
+        id: read_changelog
+        run: |
+          CHANGELOG=$(cat CHANGELOG.md)
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: build/privacy-shield.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            # Privacy Shield ${{ github.ref_name }}
+
+            ## 📦 Assets
+            - **privacy-shield.zip** - Browser Extension
+
+            ## 🔧 Installation
+            1. Download `privacy-shield.zip`
+            2. Extract to a folder
+            3. Open your browser's extension settings
+            4. Enable "Developer mode"
+            5. Load unpacked extension from the folder
+
+            ${{ steps.read_changelog.outputs.changelog }}
             icons/
 
       - name: Create Release

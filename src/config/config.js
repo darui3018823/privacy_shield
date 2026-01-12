@@ -27,7 +27,10 @@ export const SUPPORTED_DOMAINS = {
     enabled: true,
     selectors: [
       '#nav-global-location-popover-link',
-      '#glow-ingress-block'
+      '#glow-ingress-block',
+      '#deliver-to-customer-text',
+      '#deliver-to-address-text',
+      '#shipping-address-selection-panel-card-id .destination-data-alignment'
     ]
   }
 };
