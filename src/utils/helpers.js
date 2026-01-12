@@ -76,8 +76,8 @@ export function createExportData(userRules, domainRules, version) {
 export function parseImportData(jsonText) {
   try {
     const data = JSON.parse(jsonText);
-    // Basic validation
-    if (typeof data !== 'object') {
+    // Basic validation: ensure it's a non-null object
+    if (typeof data !== 'object' || data === null || Array.isArray(data)) {
       return null;
     }
     return data;
