@@ -122,6 +122,78 @@ body.privacy-guard-paused [data-component="shippingAddress"] ul::after {
   display: none !important;
 }
 
+/* Amazon Order Details - Tracking ID Masking */
+.pt-delivery-card-trackingId {
+  visibility: hidden !important;
+  position: relative !important;
+  pointer-events: none !important;
+  min-height: 1.5em;
+}
+
+.pt-delivery-card-trackingId::after {
+  content: "Hidden by Privacy Shield";
+  visibility: visible !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  color: #555;
+  font-size: 12px;
+  background: #f0f2f2;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #d5d9d9;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Paused state for tracking ID */
+body.privacy-guard-paused .pt-delivery-card-trackingId {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+body.privacy-guard-paused .pt-delivery-card-trackingId::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Amazon Order Details - Shipping Address (alternate structure) */
+.shippingAddress {
+  visibility: hidden !important;
+  position: relative !important;
+  pointer-events: none !important;
+  min-height: 2em;
+}
+
+.shippingAddress::after {
+  content: "Hidden by Privacy Shield";
+  visibility: visible !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  color: #555;
+  font-size: 12px;
+  background: #f0f2f2;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #d5d9d9;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Paused state for shipping address (alternate) */
+body.privacy-guard-paused .shippingAddress {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+body.privacy-guard-paused .shippingAddress::after {
+  content: none !important;
+  display: none !important;
+}
+
 #privacy-guard-toast {
   position: fixed;
   bottom: 24px;
