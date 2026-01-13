@@ -34,8 +34,8 @@ function parseCommit(message) {
   
   const [, type, scope, exclamation, subject] = match;
   
-  // Check for BREAKING CHANGE in body
-  const hasBreakingInBody = message.includes('BREAKING CHANGE:');
+  // Check for BREAKING CHANGE in body (must be at start of line, case insensitive)
+  const hasBreakingInBody = /^BREAKING[ -]CHANGE:/im.test(message);
   
   return {
     type: type.toLowerCase(),
@@ -54,9 +54,13 @@ function parseCommit(message) {
  */
 function getCommits(fromTag, toTag = 'HEAD') {
   try {
+    // Sanitize inputs to prevent command injection
+    const sanitizedFrom = fromTag.replace(/[^a-zA-Z0-9._\-\/]/g, '');
+    const sanitizedTo = toTag.replace(/[^a-zA-Z0-9._\-\/]/g, '');
+    
     // Get commit hashes and messages
     const gitLog = execSync(
-      `git log ${fromTag}..${toTag} --format=%H%n%B%n--END-COMMIT--`,
+      `git log ${sanitizedFrom}..${sanitizedTo} --format=%H%n%B%n--END-COMMIT--`,
       { encoding: 'utf-8' }
     );
     
@@ -90,7 +94,8 @@ function getCommits(fromTag, toTag = 'HEAD') {
  */
 function getPreviousTag() {
   try {
-    const tags = execSync('git tag --sort=-version:refname', { encoding: 'utf-8' })
+    // Use creatordate for more reliable sorting with pre-release tags
+    const tags = execSync('git tag --sort=-creatordate', { encoding: 'utf-8' })
       .split('\n')
       .filter(t => t.trim());
     

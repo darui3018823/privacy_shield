@@ -55,7 +55,16 @@ jobs:
           git fetch --tags --force
           
           # Generate release notes from conventional commits
-          RELEASE_NOTES=$(node build/generate-release-notes.js)
+          if ! RELEASE_NOTES=$(node build/generate-release-notes.js); then
+            echo "Error: Failed to generate release notes"
+            exit 1
+          fi
+          
+          # Verify we have content
+          if [ -z "$RELEASE_NOTES" ]; then
+            echo "Error: Release notes are empty"
+            exit 1
+          fi
           
           # Save to file and environment variable for GitHub Actions
           echo "$RELEASE_NOTES" > build/release-notes.md
