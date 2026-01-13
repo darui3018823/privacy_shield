@@ -51,23 +51,27 @@ jobs:
       - name: Generate Release Notes
         id: release_notes
         run: |
-          # Fetch all tags for comparison
+          # Fetch all tags to ensure we have the complete history
           git fetch --tags --force
           
+          # Ensure we have the latest tag information
+          echo "Current commit: $(git rev-parse HEAD)"
+          echo "Current tag (if any): $(git describe --exact-match --tags 2>/dev/null || echo 'none')"
+          echo "All tags:"
+          git tag --sort=-creatordate | head -10
+          
+          echo ""
+          echo "=== Starting Release Notes Generation ==="
+          
           # Generate release notes from conventional commits
-          # Save to temporary file to capture both output and exit code
-          if node build/generate-release-notes.js > build/release-notes.tmp 2>&1; then
-            # Success - extract release notes (filter out stderr messages if present)
-            # Use grep to remove log lines, fallback to full file if no matches
-            if grep -q "^Generating release notes" build/release-notes.tmp; then
-              RELEASE_NOTES=$(grep -v "^Generating release notes" build/release-notes.tmp)
-            else
-              RELEASE_NOTES=$(cat build/release-notes.tmp)
-            fi
+          # Save to file to capture output
+          if node build/generate-release-notes.js 2>&1 | tee build/release-notes.tmp; then
+            # Extract the markdown content (skip stderr lines)
+            RELEASE_NOTES=$(grep -v "^===" build/release-notes.tmp | grep -v "^Generating" | grep -v "^Fetching" | grep -v "^Found" | grep -v "^Parsed" | grep -v "^Processing" | grep -v "^Commit categorization" | grep -v "^  -" | grep -v "^Current" | grep -v "^All tags" | grep -v "^Arguments" | grep -v "^No explicit" | grep -v "^auto-detecting" | tail -n +2)
             
             # Verify we have content
-            if [ -z "$RELEASE_NOTES" ]; then
-              echo "Warning: Release notes are empty, using fallback"
+            if [ -z "$(echo "$RELEASE_NOTES" | grep -v '^[[:space:]]*$')" ]; then
+              echo "Warning: No markdown content found in output"
               echo "## Release Notes" > build/release-notes.md
               echo "" >> build/release-notes.md
               echo "No changes documented for this release." >> build/release-notes.md
@@ -76,7 +80,7 @@ jobs:
             fi
           else
             # Failure - provide fallback content
-            echo "Error: Failed to generate release notes, using fallback"
+            echo "Error: Failed to generate release notes"
             echo "## Release Notes" > build/release-notes.md
             echo "" >> build/release-notes.md
             echo "Release notes could not be generated automatically. Please see the commit history for details." >> build/release-notes.md
@@ -89,6 +93,10 @@ jobs:
           echo "notes<<EOF" >> $GITHUB_OUTPUT
           echo "$FINAL_NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo ""
+          echo "=== Release Notes Generated ===" 
+          cat build/release-notes.md
 
       - name: Create Release
         uses: softprops/action-gh-release@v2

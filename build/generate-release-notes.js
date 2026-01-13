@@ -59,14 +59,20 @@ function getCommits(fromTag, toTag = 'HEAD') {
     const sanitizedFrom = fromTag.replace(/[^a-zA-Z0-9._\-\/]/g, '');
     const sanitizedTo = toTag.replace(/[^a-zA-Z0-9._\-\/]/g, '');
     
+    console.error(`Fetching commits between ${sanitizedFrom} and ${sanitizedTo}`);
+    
     // Get commit hashes and messages
     const gitLog = execSync(
       `git log ${sanitizedFrom}..${sanitizedTo} --format=%H%n%B%n--END-COMMIT--`,
       { encoding: 'utf-8' }
     );
     
+    console.error(`Found git log output of ${gitLog.length} characters`);
+    
     const commits = [];
     const commitBlocks = gitLog.split('--END-COMMIT--').filter(b => b.trim());
+    
+    console.error(`Parsed ${commitBlocks.length} commit blocks`);
     
     for (const block of commitBlocks) {
       const lines = block.trim().split('\n');
@@ -82,6 +88,8 @@ function getCommits(fromTag, toTag = 'HEAD') {
       });
     }
     
+    console.error(`Successfully parsed ${commits.length} commits`);
+    
     return commits;
   } catch (error) {
     console.error('Error getting commits:', error.message);
@@ -91,22 +99,50 @@ function getCommits(fromTag, toTag = 'HEAD') {
 
 /**
  * Get the previous tag
- * Note: This assumes the workflow is triggered by a tag push, so the current
- * tag is already in the local repository. In GitHub Actions release workflow,
- * this is always the case when triggered by 'on: push: tags:'.
+ * In GitHub Actions, when triggered by 'on: push: tags:', the current tag
+ * is checked out, but we need to compare it with the previous one.
  * @returns {string|null} Previous tag name or null
  */
 function getPreviousTag() {
   try {
+    // Get the current tag from git describe or environment
+    let currentTag = null;
+    
+    // Try to get current tag from git describe (annotated/signed tags)
+    try {
+      currentTag = execSync('git describe --exact-match --tags', { encoding: 'utf-8' }).trim();
+      console.error(`Current tag detected: ${currentTag}`);
+    } catch (e) {
+      console.error('Could not detect current tag with git describe');
+    }
+    
     // Use creatordate for chronological sorting
     // This handles pre-release tags better than version:refname
-    const tags = execSync('git tag --sort=-creatordate', { encoding: 'utf-8' })
+    const allTags = execSync('git tag --sort=-creatordate', { encoding: 'utf-8' })
       .split('\n')
       .filter(t => t.trim());
     
-    // Return the second tag (first is current tag that triggered the workflow,
-    // second is the previous release)
-    return tags[1] || null;
+    console.error(`All tags (chronological): ${allTags.slice(0, 5).join(', ')}`);
+    
+    if (allTags.length === 0) {
+      return null;
+    }
+    
+    // If we detected the current tag and it's the first in the list,
+    // return the second tag (the previous release)
+    if (currentTag && allTags[0] === currentTag && allTags.length > 1) {
+      console.error(`Previous tag: ${allTags[1]}`);
+      return allTags[1];
+    }
+    
+    // Otherwise, assume the first tag in the sorted list is the current tag
+    // and return the second one
+    if (allTags.length > 1) {
+      console.error(`Previous tag (assuming): ${allTags[1]}`);
+      return allTags[1];
+    }
+    
+    return null;
   } catch (error) {
     console.error('Error getting previous tag:', error.message);
     return null;
@@ -198,7 +234,15 @@ function generateReleaseNotes(categories) {
  */
 function main() {
   const args = process.argv.slice(2);
-  const previousTag = args[0] || getPreviousTag();
+  let previousTag = args[0];
+  
+  console.error('=== Release Notes Generation ===');
+  console.error(`Arguments passed: ${args.length > 0 ? args.join(', ') : 'none'}`);
+  
+  if (!previousTag) {
+    console.error('No explicit previous tag provided, auto-detecting...');
+    previousTag = getPreviousTag();
+  }
   
   if (!previousTag) {
     console.error('No previous tag found. This might be the first release.');
@@ -211,11 +255,24 @@ function main() {
   const commits = getCommits(previousTag);
   
   if (commits.length === 0) {
+    console.error('No commits found in the range.');
     console.log('## Release Notes\n\nNo changes in this release.');
     return;
   }
   
+  console.error(`Processing ${commits.length} commits...`);
+  
   const categories = categorizeCommits(commits);
+  
+  console.error('Commit categorization:');
+  console.error(`  - Breaking: ${categories.breaking.length}`);
+  console.error(`  - Features: ${categories.feat.length}`);
+  console.error(`  - Fixes: ${categories.fix.length}`);
+  console.error(`  - Performance: ${categories.perf.length}`);
+  console.error(`  - Refactors: ${categories.refactor.length}`);
+  console.error(`  - Docs: ${categories.docs.length}`);
+  console.error(`  - Other: ${categories.other.length}`);
+  
   const releaseNotes = generateReleaseNotes(categories);
   
   console.log(releaseNotes);
