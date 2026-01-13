@@ -48,13 +48,30 @@ jobs:
             rules.json \
             icons/
 
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          # Fetch all tags for comparison
+          git fetch --tags --force
+          
+          # Generate release notes from conventional commits
+          RELEASE_NOTES=$(node build/generate-release-notes.js)
+          
+          # Save to file and environment variable for GitHub Actions
+          echo "$RELEASE_NOTES" > build/release-notes.md
+          
+          # Set output for next step (use delimiter for multiline)
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
+          body: ${{ steps.release_notes.outputs.notes }}
           files: build/privacy-shield.zip
           draft: false
           prerelease: false
-          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
