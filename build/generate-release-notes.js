@@ -91,16 +91,21 @@ function getCommits(fromTag, toTag = 'HEAD') {
 
 /**
  * Get the previous tag
+ * Note: This assumes the workflow is triggered by a tag push, so the current
+ * tag is already in the local repository. In GitHub Actions release workflow,
+ * this is always the case when triggered by 'on: push: tags:'.
  * @returns {string|null} Previous tag name or null
  */
 function getPreviousTag() {
   try {
-    // Use creatordate for more reliable sorting with pre-release tags
+    // Use creatordate for chronological sorting
+    // This handles pre-release tags better than version:refname
     const tags = execSync('git tag --sort=-creatordate', { encoding: 'utf-8' })
       .split('\n')
       .filter(t => t.trim());
     
-    // Return the second tag (first is current, second is previous)
+    // Return the second tag (first is current tag that triggered the workflow,
+    // second is the previous release)
     return tags[1] || null;
   } catch (error) {
     console.error('Error getting previous tag:', error.message);

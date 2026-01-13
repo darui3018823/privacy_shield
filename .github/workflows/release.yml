@@ -57,8 +57,13 @@ jobs:
           # Generate release notes from conventional commits
           # Save to temporary file to capture both output and exit code
           if node build/generate-release-notes.js > build/release-notes.tmp 2>&1; then
-            # Success - extract release notes (filter out stderr messages)
-            RELEASE_NOTES=$(grep -v "^Generating release notes" build/release-notes.tmp || cat build/release-notes.tmp)
+            # Success - extract release notes (filter out stderr messages if present)
+            # Use grep to remove log lines, fallback to full file if no matches
+            if grep -q "^Generating release notes" build/release-notes.tmp; then
+              RELEASE_NOTES=$(grep -v "^Generating release notes" build/release-notes.tmp)
+            else
+              RELEASE_NOTES=$(cat build/release-notes.tmp)
+            fi
             
             # Verify we have content
             if [ -z "$RELEASE_NOTES" ]; then
