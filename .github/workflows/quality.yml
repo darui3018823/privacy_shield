@@ -16,10 +16,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'npm'
@@ -40,14 +40,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Run npm audit
         run: npm audit --audit-level=moderate
         continue-on-error: true
 
       - name: Upload SBOM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         continue-on-error: true
         with:
           name: sbom
