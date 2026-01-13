@@ -48,13 +48,55 @@ jobs:
             rules.json \
             icons/
 
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          # Fetch all tags for comparison
+          git fetch --tags --force
+          
+          # Generate release notes from conventional commits
+          # Save to temporary file to capture both output and exit code
+          if node build/generate-release-notes.js > build/release-notes.tmp 2>&1; then
+            # Success - extract release notes (filter out stderr messages if present)
+            # Use grep to remove log lines, fallback to full file if no matches
+            if grep -q "^Generating release notes" build/release-notes.tmp; then
+              RELEASE_NOTES=$(grep -v "^Generating release notes" build/release-notes.tmp)
+            else
+              RELEASE_NOTES=$(cat build/release-notes.tmp)
+            fi
+            
+            # Verify we have content
+            if [ -z "$RELEASE_NOTES" ]; then
+              echo "Warning: Release notes are empty, using fallback"
+              echo "## Release Notes" > build/release-notes.md
+              echo "" >> build/release-notes.md
+              echo "No changes documented for this release." >> build/release-notes.md
+            else
+              echo "$RELEASE_NOTES" > build/release-notes.md
+            fi
+          else
+            # Failure - provide fallback content
+            echo "Error: Failed to generate release notes, using fallback"
+            echo "## Release Notes" > build/release-notes.md
+            echo "" >> build/release-notes.md
+            echo "Release notes could not be generated automatically. Please see the commit history for details." >> build/release-notes.md
+          fi
+          
+          # Read the final release notes for output
+          FINAL_NOTES=$(cat build/release-notes.md)
+          
+          # Set output for next step (use delimiter for multiline)
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$FINAL_NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
+          body: ${{ steps.release_notes.outputs.notes }}
           files: build/privacy-shield.zip
           draft: false
           prerelease: false
-          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

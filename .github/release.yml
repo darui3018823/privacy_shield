@@ -24,27 +24,6 @@ changelog:
         - bugfix
         - fix
     
-    - title: "📚 Documentation"
-      labels:
-        - documentation
-        - docs
-    
-    - title: "🔧 Maintenance"
-      labels:
-        - maintenance
-        - refactor
-        - cleanup
-    
-    - title: "⬆️ Dependencies"
-      labels:
-        - dependencies
-        - deps
-    
-    - title: "🔄 CI/CD"
-      labels:
-        - ci
-        - github-actions
-    
     - title: "Other Changes"
       labels:
         - "*"
