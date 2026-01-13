@@ -54,11 +54,18 @@ jobs:
           # Fetch all tags for comparison
           git fetch --tags --force
           
-          # Generate release notes from conventional commits
-          if ! RELEASE_NOTES=$(node build/generate-release-notes.js); then
+          # Generate release notes from conventional commits (stderr goes to terminal)
+          RELEASE_NOTES=$(node build/generate-release-notes.js 2>&1 >&2)
+          EXIT_CODE=$?
+          
+          # Check if script succeeded
+          if [ $EXIT_CODE -ne 0 ]; then
             echo "Error: Failed to generate release notes"
             exit 1
           fi
+          
+          # Capture the actual output (without stderr messages)
+          RELEASE_NOTES=$(node build/generate-release-notes.js 2>/dev/null)
           
           # Verify we have content
           if [ -z "$RELEASE_NOTES" ]; then

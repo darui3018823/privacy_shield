@@ -156,56 +156,35 @@ function formatCommit(commit) {
 }
 
 /**
+ * Add a category section to the release notes
+ * @param {string} title - Section title
+ * @param {Array} commits - Array of commits for this category
+ * @returns {string} Formatted section or empty string
+ */
+function addSection(title, commits) {
+  if (commits.length === 0) {
+    return '';
+  }
+  return `## ${title}\n\n${commits.map(formatCommit).join('\n')}`;
+}
+
+/**
  * Generate release notes markdown
  * @param {Object} categories - Categorized commits
  * @returns {string} Release notes in markdown format
  */
 function generateReleaseNotes(categories) {
-  const sections = [];
+  const sections = [
+    addSection('🚨 Breaking Changes', categories.breaking),
+    addSection('🎉 New Features', categories.feat),
+    addSection('🐛 Bug Fixes', categories.fix),
+    addSection('⚡ Performance Improvements', categories.perf),
+    addSection('♻️ Refactors', categories.refactor),
+    addSection('📚 Documentation', categories.docs),
+    addSection('🔧 Other Changes', categories.other)
+  ].filter(section => section !== '');
   
-  if (categories.breaking.length > 0) {
-    sections.push('## 🚨 Breaking Changes\n');
-    sections.push(categories.breaking.map(formatCommit).join('\n'));
-    sections.push('\n');
-  }
-  
-  if (categories.feat.length > 0) {
-    sections.push('## 🎉 New Features\n');
-    sections.push(categories.feat.map(formatCommit).join('\n'));
-    sections.push('\n');
-  }
-  
-  if (categories.fix.length > 0) {
-    sections.push('## 🐛 Bug Fixes\n');
-    sections.push(categories.fix.map(formatCommit).join('\n'));
-    sections.push('\n');
-  }
-  
-  if (categories.perf.length > 0) {
-    sections.push('## ⚡ Performance Improvements\n');
-    sections.push(categories.perf.map(formatCommit).join('\n'));
-    sections.push('\n');
-  }
-  
-  if (categories.refactor.length > 0) {
-    sections.push('## ♻️ Refactors\n');
-    sections.push(categories.refactor.map(formatCommit).join('\n'));
-    sections.push('\n');
-  }
-  
-  if (categories.docs.length > 0) {
-    sections.push('## 📚 Documentation\n');
-    sections.push(categories.docs.map(formatCommit).join('\n'));
-    sections.push('\n');
-  }
-  
-  if (categories.other.length > 0) {
-    sections.push('## 🔧 Other Changes\n');
-    sections.push(categories.other.map(formatCommit).join('\n'));
-    sections.push('\n');
-  }
-  
-  return sections.join('\n').trim();
+  return sections.join('\n\n');
 }
 
 /**
