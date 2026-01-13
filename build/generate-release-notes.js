@@ -18,8 +18,9 @@ function parseCommit(message) {
   // Remove Co-authored-by and other metadata
   const firstLine = message.split('\n')[0].trim();
   
-  // Match conventional commit format: type(scope)!?: subject
-  const conventionalRegex = /^(\w+)(?:\(([^)]+)\))?(!)?: (.+)$/;
+  // Match conventional commit format: type(scope)!: subject
+  // Allow optional whitespace after colon
+  const conventionalRegex = /^(\w+)(?:\(([^)]+)\))?(!)?:\s*(.+)$/;
   const match = firstLine.match(conventionalRegex);
   
   if (!match) {

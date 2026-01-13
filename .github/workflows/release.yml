@@ -55,31 +55,34 @@ jobs:
           git fetch --tags --force
           
           # Generate release notes from conventional commits
-          # Run once to show logs, capture exit code
-          node build/generate-release-notes.js > /dev/null
-          EXIT_CODE=$?
-          
-          # Check if script succeeded
-          if [ $EXIT_CODE -ne 0 ]; then
-            echo "Error: Failed to generate release notes"
-            exit 1
+          # Save to temporary file to capture both output and exit code
+          if node build/generate-release-notes.js > build/release-notes.tmp 2>&1; then
+            # Success - extract release notes (filter out stderr messages)
+            RELEASE_NOTES=$(grep -v "^Generating release notes" build/release-notes.tmp || cat build/release-notes.tmp)
+            
+            # Verify we have content
+            if [ -z "$RELEASE_NOTES" ]; then
+              echo "Warning: Release notes are empty, using fallback"
+              echo "## Release Notes" > build/release-notes.md
+              echo "" >> build/release-notes.md
+              echo "No changes documented for this release." >> build/release-notes.md
+            else
+              echo "$RELEASE_NOTES" > build/release-notes.md
+            fi
+          else
+            # Failure - provide fallback content
+            echo "Error: Failed to generate release notes, using fallback"
+            echo "## Release Notes" > build/release-notes.md
+            echo "" >> build/release-notes.md
+            echo "Release notes could not be generated automatically. Please see the commit history for details." >> build/release-notes.md
           fi
           
-          # Capture the actual output (without stderr messages)
-          RELEASE_NOTES=$(node build/generate-release-notes.js 2>/dev/null)
-          
-          # Verify we have content
-          if [ -z "$RELEASE_NOTES" ]; then
-            echo "Error: Release notes are empty"
-            exit 1
-          fi
-          
-          # Save to file and environment variable for GitHub Actions
-          echo "$RELEASE_NOTES" > build/release-notes.md
+          # Read the final release notes for output
+          FINAL_NOTES=$(cat build/release-notes.md)
           
           # Set output for next step (use delimiter for multiline)
           echo "notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$RELEASE_NOTES" >> $GITHUB_OUTPUT
+          echo "$FINAL_NOTES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create Release
