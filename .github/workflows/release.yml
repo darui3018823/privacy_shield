@@ -54,8 +54,9 @@ jobs:
           # Fetch all tags for comparison
           git fetch --tags --force
           
-          # Generate release notes from conventional commits (stderr goes to terminal)
-          RELEASE_NOTES=$(node build/generate-release-notes.js 2>&1 >&2)
+          # Generate release notes from conventional commits
+          # Run once to show logs, capture exit code
+          node build/generate-release-notes.js > /dev/null
           EXIT_CODE=$?
           
           # Check if script succeeded
