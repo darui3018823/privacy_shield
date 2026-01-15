@@ -406,3 +406,78 @@ body.privacy-guard-paused #shipping-address-selection-panel-card-id .destination
   content: none !important;
   display: none !important;
 }
+
+/* Amazon Payment Portal - Account Holder Name Masking */
+[data-pmts-component-id] .pmts-account-holder-name {
+  visibility: hidden !important;
+  position: relative !important;
+  display: inline-block !important;
+  pointer-events: none !important;
+  min-width: 150px;
+}
+
+[data-pmts-component-id] .pmts-account-holder-name::before {
+  content: "Hidden by Privacy Shield";
+  visibility: visible !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #555;
+  font-size: 12px;
+  background: #f0f2f2;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #d5d9d9;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Paused state for Account Holder Name */
+body.privacy-guard-paused [data-pmts-component-id] .pmts-account-holder-name {
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+body.privacy-guard-paused [data-pmts-component-id] .pmts-account-holder-name::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Amazon Payment Portal - Name Info in Component pp-n4Q9WI-34 */
+.pmts-portal-components-pp-n4Q9WI-34 .a-column.a-span5.a-span-last {
+  visibility: hidden !important;
+  position: relative !important;
+  display: block !important;
+  pointer-events: none !important;
+  min-height: 1.5em;
+}
+
+.pmts-portal-components-pp-n4Q9WI-34 .a-column.a-span5.a-span-last::before {
+  content: "Hidden by Privacy Shield";
+  visibility: visible !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #555;
+  font-size: 12px;
+  background: #f0f2f2;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #d5d9d9;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Paused state for Name Info */
+body.privacy-guard-paused .pmts-portal-components-pp-n4Q9WI-34 .a-column.a-span5.a-span-last {
+  visibility: visible !important;
+  pointer-events: auto !important;
+  min-height: auto !important;
+}
+
+body.privacy-guard-paused .pmts-portal-components-pp-n4Q9WI-34 .a-column.a-span5.a-span-last::before {
+  content: none !important;
+  display: none !important;
+}

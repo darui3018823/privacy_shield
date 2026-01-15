@@ -1,6 +1,6 @@
 {
   "name": "universal-privacy-shield",
-  "version": "2.5.6",
+  "version": "2.5.7",
   "description": "Privacy information concealment extension",
   "private": true,
   "scripts": {
