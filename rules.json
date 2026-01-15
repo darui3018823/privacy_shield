@@ -35,7 +35,12 @@
             "enabled": true,
             "selectors": [
                 "#nav-global-location-popover-link",
-                "#glow-ingress-block"
+                "#glow-ingress-block",
+                "#deliver-to-customer-text",
+                "#deliver-to-address-text",
+                "#shipping-address-selection-panel-card-id .destination-data-alignment",
+                "[data-pmts-component-id] .pmts-account-holder-name",
+                ".pmts-portal-components-pp-n4Q9WI-34 .a-column.a-span5.a-span-last"
             ]
         }
     },
