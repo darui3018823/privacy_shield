@@ -481,3 +481,41 @@ body.privacy-guard-paused .pmts-portal-components-pp-n4Q9WI-34 .a-column.a-span5
   content: none !important;
   display: none !important;
 }
+
+/* Amazon Payment Portal - Name Info in Post Pay Note Section (Paidy etc.) */
+.pmts-select-post-pay-note-padding .a-column.a-span5.a-span-last {
+  visibility: hidden !important;
+  position: relative !important;
+  display: block !important;
+  pointer-events: none !important;
+  min-height: 1.5em;
+}
+
+.pmts-select-post-pay-note-padding .a-column.a-span5.a-span-last::before {
+  content: "Hidden by Privacy Shield";
+  visibility: visible !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #555;
+  font-size: 12px;
+  background: #f0f2f2;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #d5d9d9;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Paused state for Post Pay Note Name */
+body.privacy-guard-paused .pmts-select-post-pay-note-padding .a-column.a-span5.a-span-last {
+  visibility: visible !important;
+  pointer-events: auto !important;
+  min-height: auto !important;
+}
+
+body.privacy-guard-paused .pmts-select-post-pay-note-padding .a-column.a-span5.a-span-last::before {
+  content: none !important;
+  display: none !important;
+}
