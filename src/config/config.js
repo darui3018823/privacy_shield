@@ -30,7 +30,11 @@ export const SUPPORTED_DOMAINS = {
       '#glow-ingress-block',
       '#deliver-to-customer-text',
       '#deliver-to-address-text',
-      '#shipping-address-selection-panel-card-id .destination-data-alignment'
+      '#shipping-address-selection-panel-card-id .destination-data-alignment',
+      // Account holder name in payment portal components
+      '[data-pmts-component-id] .pmts-account-holder-name',
+      // Name info in payment portal component pp-n4Q9WI-34
+      '.pmts-portal-components-pp-n4Q9WI-34 .a-column.a-span5.a-span-last'
     ]
   }
 };
