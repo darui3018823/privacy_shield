@@ -69,7 +69,7 @@ jobs:
           # Save to file to capture output
           if node build/generate-release-notes.js 2>&1 | tee build/release-notes.tmp; then
             # Extract the markdown content (skip stderr lines)
-            RELEASE_NOTES=$(grep -v "^===" build/release-notes.tmp | grep -v "^Generating" | grep -v "^Fetching" | grep -v "^Found" | grep -v "^Parsed" | grep -v "^Processing" | grep -v "^Commit categorization" | grep -v "^  -" | grep -v "^Current" | grep -v "^All tags" | grep -v "^Arguments" | grep -v "^No explicit" | grep -v "^auto-detecting" | grep -v "^Successfully" | grep -v "^Could not" | grep -v "^Previous tag" | tail -n +2)
+            RELEASE_NOTES=$(grep -v "^===" build/release-notes.tmp | grep -v "^Generating" | grep -v "^Fetching" | grep -v "^Found" | grep -v "^Parsed" | grep -v "^Processing" | grep -v "^Commit categorization" | grep -v "^  -" | grep -v "^Current" | grep -v "^All tags" | grep -v "^Arguments" | grep -v "^No explicit" | grep -v "^auto-detecting" | grep -v "^Successfully" | grep -v "^Could not" | grep -v "^Previous tag")
             
             # Verify we have content
             if [ -z "$(echo "$RELEASE_NOTES" | grep -v '^[[:space:]]*$')" ]; then

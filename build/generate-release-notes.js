@@ -99,6 +99,38 @@ function getCommits(fromTag, toTag = 'HEAD') {
 }
 
 /**
+ * Get the current version tag
+ * @returns {string|null} Current tag name or null
+ */
+function getCurrentVersion() {
+  try {
+    // Try to get current tag from git describe (annotated/signed tags)
+    try {
+      const currentTag = execSync('git describe --exact-match --tags', { encoding: 'utf-8' }).trim();
+      console.error(`Current version detected: ${currentTag}`);
+      return currentTag;
+    } catch (e) {
+      console.error('Could not detect current tag with git describe');
+    }
+    
+    // Fallback: get the most recent tag
+    const allTags = execSync('git tag --sort=-creatordate', { encoding: 'utf-8' })
+      .split('\n')
+      .filter(t => t.trim());
+    
+    if (allTags.length > 0) {
+      console.error(`Using most recent tag as version: ${allTags[0]}`);
+      return allTags[0];
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error getting current version:', error.message);
+    return null;
+  }
+}
+
+/**
  * Get the previous tag
  * In GitHub Actions, when triggered by 'on: push: tags:', the current tag
  * is checked out, but we need to compare it with the previous one.
@@ -240,6 +272,10 @@ function main() {
   console.error('=== Release Notes Generation ===');
   console.error(`Arguments passed: ${args.length > 0 ? args.join(', ') : 'none'}`);
   
+  // Get current version for title
+  const currentVersion = getCurrentVersion();
+  const versionTitle = currentVersion ? `# Universal Privacy Shield ${currentVersion}` : '# Universal Privacy Shield';
+  
   if (!previousTag) {
     console.error('No explicit previous tag provided, auto-detecting...');
     previousTag = getPreviousTag();
@@ -247,7 +283,7 @@ function main() {
   
   if (!previousTag) {
     console.error('No previous tag found. This might be the first release.');
-    console.log('## 🎉 Initial Release\n\nThis is the first release of the project.');
+    console.log(`${versionTitle}\n\n## 🎉 Initial Release\n\nThis is the first release of the project.`);
     return;
   }
   
@@ -276,7 +312,7 @@ function main() {
   
   const releaseNotes = generateReleaseNotes(categories);
   
-  console.log(releaseNotes);
+  console.log(`${versionTitle}\n\n${releaseNotes}`);
 }
 
 // Run if called directly
@@ -287,6 +323,8 @@ if (require.main === module) {
 module.exports = {
   parseCommit,
   getCommits,
+  getCurrentVersion,
+  getPreviousTag,
   categorizeCommits,
   generateReleaseNotes
 };
