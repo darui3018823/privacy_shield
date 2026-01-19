@@ -357,7 +357,7 @@ const renderKeywords = (filter = '') => {
                 <line x1="3" y1="18" x2="3.01" y2="18"></line>
             </svg>
         </div>` : ''}
-        <span class="item-text">${escapeHtml(keyword)}</span>
+        <span class="item-text blurred" title="クリックして表示/非表示">${escapeHtml(keyword)}</span>
         <div class="item-actions">
             <label class="toggle-switch">
                 <input type="checkbox" class="keyword-toggle" data-index="${index}" ${isEnabled ? 'checked' : ''}>
@@ -404,6 +404,14 @@ const renderKeywords = (filter = '') => {
       }
 
       await saveRules();
+    });
+  });
+
+  // Attach blur toggle listeners
+  keywordsList.querySelectorAll('.item-text').forEach(text => {
+    text.addEventListener('click', (e) => {
+      e.target.classList.toggle('blurred');
+      e.target.classList.toggle('revealed');
     });
   });
 };
@@ -516,7 +524,7 @@ const renderPatterns = (filter = '') => {
                 <line x1="3" y1="18" x2="3.01" y2="18"></line>
             </svg>
         </div>` : ''}
-        <span class="item-text">${escapeHtml(pattern)}</span>
+        <span class="item-text blurred" title="クリックして表示/非表示">${escapeHtml(pattern)}</span>
         <div class="item-actions">
             <label class="toggle-switch">
                 <input type="checkbox" class="pattern-toggle" data-index="${index}" ${isEnabled ? 'checked' : ''}>
@@ -562,6 +570,14 @@ const renderPatterns = (filter = '') => {
       }
 
       await saveRules();
+    });
+  });
+
+  // Attach blur toggle listeners
+  patternsList.querySelectorAll('.item-text').forEach(text => {
+    text.addEventListener('click', (e) => {
+      e.target.classList.toggle('blurred');
+      e.target.classList.toggle('revealed');
     });
   });
 };
