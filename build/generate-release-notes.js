@@ -62,8 +62,9 @@ function getCommits(fromTag, toTag = 'HEAD') {
     console.error(`Fetching commits between ${sanitizedFrom} and ${sanitizedTo}`);
     
     // Get commit hashes and messages
+    // Use ^fromTag to exclude it but include toTag
     const gitLog = execSync(
-      `git log ${sanitizedFrom}..${sanitizedTo} --format=%H%n%B%n--END-COMMIT--`,
+      `git log ^${sanitizedFrom} ${sanitizedTo} --format=%H%n%B%n--END-COMMIT--`,
       { encoding: 'utf-8' }
     );
     
