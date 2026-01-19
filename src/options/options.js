@@ -357,7 +357,17 @@ const renderKeywords = (filter = '') => {
                 <line x1="3" y1="18" x2="3.01" y2="18"></line>
             </svg>
         </div>` : ''}
-        <span class="item-text blurred" title="クリックして表示/非表示">${escapeHtml(keyword)}</span>
+        <button class="btn-icon visibility-toggle" data-index="${index}" title="表示/非表示">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="eye-icon">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="eye-off-icon hidden">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+        </button>
+        <span class="item-text blurred" id="keyword-text-${index}">${escapeHtml(keyword)}</span>
         <div class="item-actions">
             <label class="toggle-switch">
                 <input type="checkbox" class="keyword-toggle" data-index="${index}" ${isEnabled ? 'checked' : ''}>
@@ -407,11 +417,19 @@ const renderKeywords = (filter = '') => {
     });
   });
 
-  // Attach blur toggle listeners
-  keywordsList.querySelectorAll('.item-text').forEach(text => {
-    text.addEventListener('click', (e) => {
-      e.target.classList.toggle('blurred');
-      e.target.classList.toggle('revealed');
+  // Attach visibility toggle listeners
+  keywordsList.querySelectorAll('.visibility-toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const index = btn.dataset.index;
+      const textSpan = document.getElementById(`keyword-text-${index}`);
+      const eyeIcon = btn.querySelector('.eye-icon');
+      const eyeOffIcon = btn.querySelector('.eye-off-icon');
+
+      textSpan.classList.toggle('blurred');
+      textSpan.classList.toggle('revealed');
+
+      eyeIcon.classList.toggle('hidden');
+      eyeOffIcon.classList.toggle('hidden');
     });
   });
 };

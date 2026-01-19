@@ -201,6 +201,38 @@ body {
     background: var(--red-500);
 }
 
+.btn-danger:hover {
+    background: var(--red-500);
+}
+
+.btn-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-right: 8px;
+}
+
+.btn-icon:hover {
+    background: var(--bg-tertiary);
+    color: var(--accent-primary);
+}
+
+.btn-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.btn-icon .hidden {
+    display: none;
+}
+
 .text-danger {
     color: var(--red-400);
 }
