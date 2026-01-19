@@ -13,7 +13,8 @@ import {
   parseImportData,
   formatDateForFilename
 } from '../utils/helpers.js';
-import { SUPPORTED_DOMAINS, STORAGE_KEYS, DEFAULT_GENERAL_SETTINGS, DEFAULT_USER_RULES } from '../config/constants.js';
+import { STORAGE_KEYS, DEFAULT_GENERAL_SETTINGS, DEFAULT_USER_RULES } from '../config/constants.js';
+import { SUPPORTED_DOMAINS } from '../config/config.js';
 import { CONFIG_VERSION } from '../config/constants.js';
 
 // State variables
@@ -420,12 +421,12 @@ const addPattern = async (input) => {
     return;
   }
 
-  if (userRules.patterns.includes(value)) {
+  if (userRules.patterns.some(p => (typeof p === 'string' ? p : p.value) === value)) {
     showToast('この正規表現は既に登録されています', 'warning');
     return;
   }
 
-  userRules.patterns.push(value);
+  userRules.patterns.push({ value: value, enabled: true });
   input.value = '';
   await saveAndRender();
   showToast('正規表現を追加しました');
@@ -495,8 +496,12 @@ const renderPatterns = (filter = '') => {
   }
 
   patternsList.innerHTML = patterns
-    .map((pattern, index) => `
-      <div class="item-card fade-in" 
+    .map((item, index) => {
+      const pattern = typeof item === 'string' ? item : item.value;
+      const isEnabled = typeof item === 'string' ? true : item.enabled;
+
+      return `
+      <div class="item-card fade-in ${isEnabled ? '' : 'disabled'}" 
            style="animation-delay: ${index * 0.05}s" 
            data-index="${index}"
            draggable="${isDraggable}">
@@ -512,9 +517,15 @@ const renderPatterns = (filter = '') => {
             </svg>
         </div>` : ''}
         <span class="item-text">${escapeHtml(pattern)}</span>
-        <button class="btn btn-danger delete-pattern" data-index="${index}">削除</button>
+        <div class="item-actions">
+            <label class="toggle-switch">
+                <input type="checkbox" class="pattern-toggle" data-index="${index}" ${isEnabled ? 'checked' : ''}>
+                <span class="slider round"></span>
+            </label>
+            <button class="btn btn-danger delete-pattern" data-index="${index}">削除</button>
+        </div>
       </div>
-    `)
+    `})
     .join('');
 
   if (isDraggable) {
@@ -526,6 +537,31 @@ const renderPatterns = (filter = '') => {
     btn.addEventListener('click', (e) => {
       const index = parseInt(e.target.dataset.index);
       showConfirmationModal('この正規表現パターンを削除しますか？', () => deletePattern(index));
+    });
+  });
+
+  // Attach toggle listeners
+  patternsList.querySelectorAll('.pattern-toggle').forEach(toggle => {
+    toggle.addEventListener('change', async (e) => {
+      const index = parseInt(e.target.dataset.index);
+      const isChecked = e.target.checked;
+
+      // Update state
+      if (typeof userRules.patterns[index] === 'object') {
+        userRules.patterns[index].enabled = isChecked;
+      } else {
+        userRules.patterns[index] = { value: userRules.patterns[index], enabled: isChecked };
+      }
+
+      // Update UI class
+      const card = e.target.closest('.item-card');
+      if (isChecked) {
+        card.classList.remove('disabled');
+      } else {
+        card.classList.add('disabled');
+      }
+
+      await saveRules();
     });
   });
 };

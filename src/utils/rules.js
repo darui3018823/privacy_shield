@@ -20,7 +20,7 @@ export class RulesManager {
     try {
       // First try to get custom domain rules from storage
       const storedRules = await StorageManager.getDomainRules();
-      
+
       if (storedRules) {
         for (const [key, domain] of Object.entries(storedRules)) {
           if (domain.matches && domain.matches.some(m => hostname.includes(m))) {
@@ -82,7 +82,11 @@ export class RulesManager {
     return patterns
       .map(p => {
         try {
-          return new RegExp(p, 'g');
+          // Handle object format { value: 'pattern', enabled: true }
+          const patternStr = typeof p === 'object' ? (p.enabled ? p.value : null) : p;
+          if (!patternStr) return null; // Skip disabled or invalid
+
+          return new RegExp(patternStr, 'g');
         } catch (error) {
           Logger.warn(`Invalid pattern: ${p}`, error);
           return null;
