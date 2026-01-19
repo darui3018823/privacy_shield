@@ -63,7 +63,26 @@ export const STORAGE_KEYS = {
   HIDDEN_COUNT: 'hiddenCount',
   HIDDEN_ITEMS: 'hiddenItems',
   USER_RULES: 'userRules',
-  DOMAIN_RULES: 'domainRules'
+  DOMAIN_RULES: 'domainRules',
+  GENERAL_SETTINGS: 'generalSettings'
+};
+
+/**
+ * Available themes
+ * @constant {Object}
+ */
+export const THEMES = {
+  DARK: 'dark',
+  LIGHT: 'light'
+};
+
+/**
+ * Default general settings
+ * @constant {Object}
+ */
+export const DEFAULT_GENERAL_SETTINGS = {
+  theme: THEMES.DARK,
+  showBadge: true
 };
 
 /**
