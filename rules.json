@@ -13,9 +13,7 @@
                 ".vqkKIe",
                 ".eKPi4",
                 "update-location",
-                ".dfB0uf",
-                ".VoqD8",
-                ".eYSAde"
+                ".dfB0uf"
             ]
         },
         "gemini": {
@@ -26,9 +24,7 @@
             "enabled": true,
             "selectors": [
                 "location-footer",
-                ".location-menu-item-container",
-                ".VoqD8",
-                ".eYSAde"
+                ".location-menu-item-container"
             ]
         },
         "amazon": {
@@ -48,10 +44,7 @@
                 "ogs.google.com"
             ],
             "enabled": true,
-            "selectors": [
-                ".VoqD8",
-                ".eYSAde"
-            ]
+            "selectors": []
         }
     },
     "userRules": {
