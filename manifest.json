@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Universal Privacy Shield",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "プライバシー情報を自動的に隠蔽する汎用プライバシー保護ツール",
   "permissions": [
     "storage",
@@ -35,7 +35,9 @@
       "css": [
         "content.css"
       ],
-      "run_at": "document_start"
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
     },
     {
       "matches": [
@@ -47,7 +49,9 @@
       "js": [
         "content.js"
       ],
-      "run_at": "document_end"
+      "run_at": "document_end",
+      "all_frames": true,
+      "match_about_blank": true
     },
     {
       "matches": [
