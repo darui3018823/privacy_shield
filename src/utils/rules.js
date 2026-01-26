@@ -18,37 +18,61 @@ export class RulesManager {
    */
   static async loadDomainRules(hostname) {
     try {
-      // First try to get custom domain rules from storage
-      const storedRules = await StorageManager.getDomainRules();
+      let activeDomain = null;
+      let defaultDomain = null;
+      let domainKey = null;
 
+      // 1. Get custom domain rules from storage to find a match
+      const storedRules = await StorageManager.getDomainRules();
       if (storedRules) {
         for (const [key, domain] of Object.entries(storedRules)) {
           if (domain.matches && domain.matches.some(m => hostname.includes(m))) {
-            return domain;
+            activeDomain = { ...domain }; // Clone to avoid mutation issues
+            domainKey = key;
+            break;
           }
         }
       }
 
-      // Fall back to default rules from rules.json
+      // 2. Get default rules to merge new selectors
       try {
-        const defaultRules = await fetch(chrome.runtime.getURL('rules.json')).then(r => r.json());
-        for (const [key, domain] of Object.entries(defaultRules.domains)) {
-          if (domain.matches && domain.matches.some(m => hostname.includes(m))) {
-            return domain;
+        const rulesJson = await fetch(chrome.runtime.getURL('rules.json')).then(r => r.json());
+        const defaults = rulesJson.domains;
+
+        // Find default for the key if we found a stored one, OR search matches if we haven't
+        if (domainKey && defaults[domainKey]) {
+          defaultDomain = defaults[domainKey];
+        } else if (!activeDomain) {
+          for (const [key, domain] of Object.entries(defaults)) {
+            if (domain.matches && domain.matches.some(m => hostname.includes(m))) {
+              activeDomain = domain;
+              defaultDomain = domain;
+              break;
+            }
           }
         }
       } catch (fetchError) {
-        Logger.warn('Failed to fetch default rules, using built-in config', fetchError);
-      }
-
-      // Finally, fall back to built-in configuration
-      for (const [key, domain] of Object.entries(SUPPORTED_DOMAINS)) {
-        if (domain.matches && domain.matches.some(m => hostname.includes(m))) {
-          return domain;
+        // Fallback to built-in config if fetch fails
+        if (domainKey && SUPPORTED_DOMAINS[domainKey]) {
+          defaultDomain = SUPPORTED_DOMAINS[domainKey];
+        } else if (!activeDomain) {
+          for (const [key, domain] of Object.entries(SUPPORTED_DOMAINS)) {
+            if (domain.matches && domain.matches.some(m => hostname.includes(m))) {
+              activeDomain = domain;
+              defaultDomain = domain;
+              break;
+            }
+          }
         }
       }
 
-      return null;
+      // 3. Merge selectors if we have both (to ensure new defaults apply to old storage)
+      if (activeDomain && defaultDomain && defaultDomain.selectors) {
+        const uniqueSelectors = new Set([...(activeDomain.selectors || []), ...defaultDomain.selectors]);
+        activeDomain.selectors = Array.from(uniqueSelectors);
+      }
+
+      return activeDomain;
     } catch (error) {
       Logger.error('Failed to load domain rules', error);
       return null;
