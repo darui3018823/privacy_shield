@@ -29,6 +29,12 @@ export const SUPPORTED_DOMAINS = {
       '#nav-global-location-popover-link',
       '#glow-ingress-block'
     ]
+  },
+  ogs: {
+    name: 'Google Account Widget',
+    matches: ['ogs.google.com'],
+    enabled: true,
+    selectors: ['.VoqD8', '.eYSAde']
   }
 };
 
@@ -40,7 +46,8 @@ export const DOMAIN_DISPLAY_NAMES = {
   'gemini.google.com': 'Google Gemini',
   'google.com': 'Google Search',
   'google.co.jp': 'Google Search',
-  'amazon.co.jp': 'Amazon.co.jp'
+  'amazon.co.jp': 'Amazon.co.jp',
+  'ogs.google.com': 'Google Account Widget'
 };
 
 /**

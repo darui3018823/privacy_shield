@@ -41,6 +41,17 @@
                 "#nav-global-location-popover-link",
                 "#glow-ingress-block"
             ]
+        },
+        "ogs": {
+            "name": "Google Account Widget",
+            "matches": [
+                "ogs.google.com"
+            ],
+            "enabled": true,
+            "selectors": [
+                ".VoqD8",
+                ".eYSAde"
+            ]
         }
     },
     "userRules": {
