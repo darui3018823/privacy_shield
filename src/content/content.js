@@ -222,11 +222,21 @@ import {
 
   /**
    * Hide elements containing specific keywords
-   * @param {Array<string>} keywords - Keywords to search for
+   * @param {Array<string|Object>} keywords - Keywords to search for
    * @returns {boolean} True if any elements were hidden
    */
   const hideByKeywords = (keywords) => {
     if (!keywords || keywords.length === 0) return false;
+
+    // Filter enabled keywords and extract values
+    const activeKeywords = keywords
+      .map(k => {
+        if (typeof k === 'string') return k;
+        return k.enabled ? k.value : null;
+      })
+      .filter(Boolean);
+
+    if (activeKeywords.length === 0) return false;
 
     let changed = false;
     const walker = document.createTreeWalker(
@@ -241,7 +251,7 @@ import {
       const node = walker.currentNode;
       const text = node.textContent;
 
-      for (const keyword of keywords) {
+      for (const keyword of activeKeywords) {
         if (text && text.includes(keyword)) {
           const target = findTargetElement(node, MAX_TEXT_LENGTH_SMALL, MAX_TEXT_LENGTH_LARGE);
           if (target && !target.hasAttribute('data-privacy-hidden')) {
