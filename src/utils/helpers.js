@@ -103,9 +103,19 @@ export function findTargetElement(node, maxSmall, maxLarge) {
   let target = node.parentElement;
   if (!target) return null;
 
+  // Safety check: never hide body or html
+  if (target === document.body || target === document.documentElement) {
+    return null;
+  }
+
   while (target && target.innerText && target.innerText.length < maxSmall) {
-    if (target.parentElement && target.parentElement.innerText.length < maxLarge) {
-      target = target.parentElement;
+    // Traverse up only if parent is valid and not body/html
+    const parent = target.parentElement;
+    if (parent &&
+      parent !== document.body &&
+      parent !== document.documentElement &&
+      parent.innerText.length < maxLarge) {
+      target = parent;
     } else {
       break;
     }
