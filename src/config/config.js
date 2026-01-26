@@ -13,13 +13,13 @@ export const SUPPORTED_DOMAINS = {
     name: 'Google Search',
     matches: ['www.google.com', 'www.google.co.jp'],
     enabled: true,
-    selectors: ['.O4T6Pe', '.vqkKIe', '.eKPi4', 'update-location', '.dfB0uf']
+    selectors: ['.O4T6Pe', '.vqkKIe', '.eKPi4', 'update-location', '.dfB0uf', '.VoqD8', '.eYSAde']
   },
   gemini: {
     name: 'Google Gemini',
     matches: ['gemini.google.com'],
     enabled: true,
-    selectors: ['location-footer', '.location-menu-item-container']
+    selectors: ['location-footer', '.location-menu-item-container', '.VoqD8', '.eYSAde']
   },
   amazon: {
     name: 'Amazon.co.jp',
