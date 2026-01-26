@@ -1,8 +1,6 @@
 update-location,
 location-footer,
 .location-menu-item-container,
-.VoqD8,
-.eYSAde,
 #nav-global-location-popover-link,
 #glow-ingress-block {
   display: none !important;
@@ -513,7 +511,35 @@ body.privacy-guard-paused .pmts-select-post-pay-note-padding .a-column.a-span5.a
   min-height: auto !important;
 }
 
-body.privacy-guard-paused .pmts-select-post-pay-note-padding .a-column.a-span5.a-span-last::before {
-  content: none !important;
+
+/* Google Account Switcher Email Masking */
+div.eYSAde {
+  visibility: hidden !important;
+  font-size: 0 !important;
+  position: relative !important;
+  display: block !important;
+  min-height: 20px;
+}
+
+div.eYSAde::before {
+  content: "Hidden Email";
+  visibility: visible !important;
+  font-size: 12px !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #555;
+  background: #f1f3f4;
+  padding: 2px 4px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+body.privacy-guard-paused div.eYSAde {
+  visibility: visible !important;
+  font-size: inherit !important;
+}
+
+body.privacy-guard-paused div.eYSAde::before {
   display: none !important;
 }
