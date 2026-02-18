@@ -228,11 +228,11 @@ import {
   const hideByKeywords = (keywords) => {
     if (!keywords || keywords.length === 0) return false;
 
-    // Filter enabled keywords and extract values
+    // Filter enabled keywords and prepare them
     const activeKeywords = keywords
       .map(k => {
-        if (typeof k === 'string') return k;
-        return k.enabled ? k.value : null;
+        if (typeof k === 'string') return { value: k, caseSensitive: false };
+        return k.enabled ? { value: k.value, caseSensitive: k.caseSensitive || false } : null;
       })
       .filter(Boolean);
 
@@ -251,11 +251,25 @@ import {
       const node = walker.currentNode;
       const text = node.textContent;
 
+      if (!text) continue;
+
+      // Optimization: Create lower version only once if needed
+      let lowerText = null;
+
       for (const keyword of activeKeywords) {
-        if (text && text.includes(keyword)) {
+        let isMatch = false;
+
+        if (keyword.caseSensitive) {
+          isMatch = text.includes(keyword.value);
+        } else {
+          if (lowerText === null) lowerText = text.toLowerCase();
+          isMatch = lowerText.includes(keyword.value.toLowerCase());
+        }
+
+        if (isMatch) {
           const target = findTargetElement(node, MAX_TEXT_LENGTH_SMALL, MAX_TEXT_LENGTH_LARGE);
           if (target && !target.hasAttribute('data-privacy-hidden')) {
-            nodesToHide.push({ el: target, keyword });
+            nodesToHide.push({ el: target, keyword: keyword.value });
           }
           break;
         }

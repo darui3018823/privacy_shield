@@ -1046,3 +1046,8 @@ input:checked+.slider:before {
         justify-content: center;
     }
 }
+
+/* Global Utility */
+.hidden {
+    display: none !important;
+}

@@ -37,6 +37,7 @@ const init = async () => {
     setupDomainHandlers();
     setupGeneralSettingsHandlers();
     setupKeyboardShortcuts();
+    setupStorageListeners();
     setupImportExport();
 
     // Display Version
@@ -266,7 +267,7 @@ const addKeyword = async (input) => {
     return;
   }
 
-  userRules.keywords.push({ value: value, enabled: true });
+  userRules.keywords.push({ value: value, enabled: true, caseSensitive: false });
   input.value = '';
   await saveAndRender();
   showToast('キーワードを追加しました');
@@ -340,6 +341,7 @@ const renderKeywords = (filter = '') => {
       // Handle both old string format (fallback) and new object format
       const keyword = typeof item === 'string' ? item : item.value;
       const isEnabled = typeof item === 'string' ? true : item.enabled;
+      const isCaseSensitive = typeof item === 'string' ? false : (item.caseSensitive || false);
 
       return `
       <div class="item-card fade-in ${isEnabled ? '' : 'disabled'}" 
@@ -369,6 +371,9 @@ const renderKeywords = (filter = '') => {
         </button>
         <span class="item-text blurred" id="keyword-text-${index}">${escapeHtml(keyword)}</span>
         <div class="item-actions">
+            <button class="btn-icon case-sensitive-toggle ${isCaseSensitive ? 'active' : ''}" data-index="${index}" title="大文字/小文字を区別">
+                <span style="font-weight: bold; font-family: sans-serif;">Aa</span>
+            </button>
             <label class="toggle-switch">
                 <input type="checkbox" class="keyword-toggle" data-index="${index}" ${isEnabled ? 'checked' : ''}>
                 <span class="slider round"></span>
@@ -412,6 +417,25 @@ const renderKeywords = (filter = '') => {
       } else {
         card.classList.add('disabled');
       }
+
+      await saveRules();
+    });
+  });
+
+  // Attach case sensitive toggle listeners
+  keywordsList.querySelectorAll('.case-sensitive-toggle').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const index = parseInt(btn.dataset.index);
+
+      // Update state
+      if (typeof userRules.keywords[index] === 'object') {
+        userRules.keywords[index].caseSensitive = !userRules.keywords[index].caseSensitive;
+      } else {
+        userRules.keywords[index] = { value: userRules.keywords[index], enabled: true, caseSensitive: true };
+      }
+
+      // Update UI
+      btn.classList.toggle('active');
 
       await saveRules();
     });
@@ -777,6 +801,57 @@ const renderStatistics = async () => {
   } catch (error) {
     Logger.error('Failed to load statistics', error);
   }
+};
+
+/**
+ * Setup storage listeners for dynamic sync
+ */
+const setupStorageListeners = () => {
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== 'local') return;
+
+    // Handle User Rules changes (Keywords, Patterns)
+    if (changes.userRules) {
+      const newRules = changes.userRules.newValue;
+      // Only update if actually different to avoid unnecessary re-renders
+      if (JSON.stringify(userRules) !== JSON.stringify(newRules)) {
+        userRules = newRules || { keywords: [], patterns: [] };
+        renderKeywords(document.getElementById('keywordSearch').value);
+        renderPatterns(document.getElementById('patternSearch').value);
+      }
+    }
+
+    // Handle Domain Rules changes
+    if (changes.domainRules) {
+      const newDomainRules = changes.domainRules.newValue;
+      if (JSON.stringify(domainRules) !== JSON.stringify(newDomainRules)) {
+        domainRules = newDomainRules || SUPPORTED_DOMAINS;
+        renderDomains(document.getElementById('domainSearch').value);
+      }
+    }
+
+    // Handle General Settings changes
+    if (changes[STORAGE_KEYS.GENERAL_SETTINGS]) {
+      const newSettings = changes[STORAGE_KEYS.GENERAL_SETTINGS].newValue;
+      if (JSON.stringify(generalSettings) !== JSON.stringify(newSettings)) {
+        generalSettings = newSettings || DEFAULT_GENERAL_SETTINGS;
+
+        // Update UI elements
+        const themeSelect = document.getElementById('themeSelect');
+        const showBadgeToggle = document.getElementById('showBadgeToggle');
+
+        if (themeSelect) themeSelect.value = generalSettings.theme;
+        if (showBadgeToggle) showBadgeToggle.checked = generalSettings.showBadge;
+
+        applyTheme(generalSettings.theme);
+      }
+    }
+
+    // Handle Statistics changes
+    if (changes.stats) {
+      renderStatistics();
+    }
+  });
 };
 
 /**
