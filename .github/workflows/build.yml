@@ -41,7 +41,7 @@ jobs:
           test -f options.js && echo "✓ options.js"
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: build-${{ matrix.node-version }}
           path: |
